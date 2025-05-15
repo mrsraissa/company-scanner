@@ -1,4 +1,19 @@
 {
+  "name": "Company Camera Scanner",
+  "short_name": "Scanner",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "description": "Simple company scanner with camera access",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
+{
   "name": "Company Scanner",
   "short_name": "Scanner",
   "start_url": "./",
