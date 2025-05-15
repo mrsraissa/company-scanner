@@ -4,12 +4,12 @@
   <title>📦 Company Scanner</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="manifest" href="manifest.json">
+  <script src="index.js"></script> <!-- ✅ Load your JS file -->
 </head>
 <body style="font-family: Arial; text-align:center; padding:20px;">
   <h2>📦 Inventory Check & Log</h2>
   <input type="text" id="barcode" placeholder="Scan barcode" style="width:250px; font-size:16px; padding:8px;"><br><br>
-  <button onclick="alert('Scanned: ' + document.getElementById('barcode').value)">✅ Check Product</button>
-  <script>
-    // This is a simple placeholder
-  </script>
-</
+  <button onclick="check()">✅ Check Product</button> <!-- ✔ Call the JS function -->
+  <div id="output" style="margin-top:20px; font-size:18px;"></div>
+</body>
+</html>
