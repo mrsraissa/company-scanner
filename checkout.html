@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>📆 Inventory Check & Log</title>
+  <title>🗖️ Inventory Check & Log</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://unpkg.com/@zxing/library@latest"></script>
   <style>
@@ -29,7 +29,7 @@
   </style>
 </head>
 <body>
-  <h2>📆 <b>Inventory Check & Log</b></h2>
+  <h2>🗖️ <b>Inventory Check & Log</b></h2>
   <button onclick="goBack()">🔙 Back to Menu</button><br><br>
 
   <button onclick="openScanner()" id="startScanBtn">▶️ Start Scanning</button>
@@ -59,35 +59,28 @@
       document.getElementById('scannerUI').style.display = 'block';
 
       codeReader = new ZXing.BrowserMultiFormatReader();
-      codeReader.decodeFromConstraints(
-        {
-          video: { facingMode: { exact: "environment" } }
-        },
-        previewElem,
-        (result, err) => {
-          if (result) {
-            barcodeInput.value = result.text;
+      codeReader.decodeOnceFromVideoDevice(undefined, previewElem)
+        .then(result => {
+          codeReader.reset(); // Stop camera immediately to avoid duplicate calls
+          barcodeInput.value = result.text;
 
-            fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(result.text)}`)
-              .then(res => res.json())
-              .then(data => {
-                if (data.status === "found") {
-                  document.getElementById("result").innerText = `✅ ${data.product} found!`;
-                  codeReader.reset();
-                } else {
-                  document.getElementById("result").innerText = "❌ Product not found in inventory.";
-                  codeReader.reset();
-                }
-              })
-              .catch(() => {
-                document.getElementById("result").innerText = "❌ Error checking inventory.";
-              });
-          }
-        }
-      ).catch(err => {
-        console.error(err);
-        document.getElementById("result").innerText = "❌ Error starting camera.";
-      });
+          fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(result.text)}`)
+            .then(res => res.json())
+            .then(data => {
+              if (data.status === "found") {
+                document.getElementById("result").innerText = `✅ ${data.product} found!`;
+              } else {
+                document.getElementById("result").innerText = "❌ Product not found in inventory.";
+              }
+            })
+            .catch(() => {
+              document.getElementById("result").innerText = "❌ Error checking inventory.";
+            });
+        })
+        .catch(err => {
+          console.error(err);
+          document.getElementById("result").innerText = "❌ Error starting camera.";
+        });
     }
 
     function submitData() {
@@ -110,7 +103,7 @@
       })
       .then(() => {
         document.getElementById("result").innerHTML =
-          `✅ Submitted:<br>📆 Barcode: ${barcode}<br>👤 User: ${user}<br>📊 Quantity: ${quantity}`;
+          `✅ Submitted:<br>🗖️ Barcode: ${barcode}<br>👤 User: ${user}<br>📊 Quantity: ${quantity}`;
 
         document.getElementById("quantity").value = "";
         document.getElementById("barcode").value = "";
