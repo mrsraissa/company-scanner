@@ -96,7 +96,7 @@
         },
         body: `user=${encodeURIComponent(user)}&quantity=${encodeURIComponent(quantity)}&barcode=${encodeURIComponent(barcode)}`
       })
-      ..then(() => {
+      .then(() => {
   document.getElementById("result").innerHTML =
     `✅ Submitted:<br>📦 Barcode: ${barcode}<br>👤 User: ${user}<br>📊 Quantity: ${quantity}`;
 
