@@ -30,84 +30,61 @@
   <div id="result" style="margin-top:15px; font-size:16px;"></div>
 
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbx_Bl4QAbqVSZndyQT97xMBKow-8AjLC3A6oHHbpGAziaIOCi1Mvqqnt9ofYA4vT9gUvA/exec";
-    let selectedDeviceId;
     const codeReader = new ZXing.BrowserMultiFormatReader();
     const previewElem = document.getElementById('preview');
     const barcodeInput = document.getElementById('barcode');
 
     function startScanner() {
       codeReader.decodeFromConstraints(
-  {
-    video: {
-      facingMode: { exact: "environment" } // 🔄 use back camera
-    }
-  },
-  previewElem,
-  (result, err) => {
-    if (result) {
-      barcodeInput.value = result.text;
-      document.getElementById("result").innerText = `✅ Barcode Scanned: ${result.text}`;
-      codeReader.reset();
-    }
-  }
-);
-         selectedDeviceId = videoInputDevices[0].deviceId;
-          codeReader.decodeOnceFromVideoDevice(selectedDeviceId, previewElem)
-            .then(result => {
-              barcodeInput.value = result.text;
-              document.getElementById('result').innerText = `✅ Scanned: ${result.text}`;
-              codeReader.reset(); // Stop camera
-            })
-            .catch(err => {
-              console.error(err);
-              document.getElementById('result').innerText = '❌ Failed to scan barcode.';
-            });
-        })
-        .catch(err => {
-          console.error("Camera error:", err);
-          document.getElementById('result').innerText = '❌ Camera access error.';
-        });
+        {
+          video: { facingMode: { exact: "environment" } }
+        },
+        previewElem,
+        (result, err) => {
+          if (result) {
+            barcodeInput.value = result.text;
+            document.getElementById("result").innerText = `✅ Barcode Scanned: ${result.text}`;
+            codeReader.reset(); // stop the camera
+          }
+        }
+      ).catch((err) => {
+        console.error("Camera init failed:", err);
+        document.getElementById("result").innerText = "❌ Error starting camera.";
+      });
     }
 
     function submitData() {
-      const user = document.getElementById('user').value.trim();
-      const qty = document.getElementById('quantity').value.trim();
-      const code = document.getElementById('barcode').value.trim();
+      const user = document.getElementById("user").value.trim();
+      const quantity = document.getElementById("quantity").value.trim();
+      const barcode = document.getElementById("barcode").value.trim();
 
-      if (!user || !qty || !code) {
-        document.getElementById('result').innerText = '⚠️ Please fill all fields.';
+      if (!user || !quantity || !barcode) {
+        document.getElementById("result").innerText = "⚠️ Please fill out all fields.";
         return;
       }
 
-      fetch(scriptURL, {
-        method: 'POST',
-        body: new URLSearchParams({ user, quantity: qty, barcode: code }),
+      fetch("https://script.google.com/macros/s/AKfycbx_Bl4QAbqVSZndyQT97xMBKow-8AjLC3A6oHHbpGAziaIOCi1Mvqqnt9ofYA4vT9gUvA/exec", {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `user=${encodeURIComponent(user)}&quantity=${encodeURIComponent(quantity)}&barcode=${encodeURIComponent(barcode)}`
       })
-        .then(res => {
-          if (!res.ok) throw new Error("HTTP error: " + res.status);
-          return res.json();
-        })
-        .then(data => {
-          if (data.status === "success") {
-            document.getElementById('result').innerText = '✅ Submitted!';
-            document.getElementById('barcode').value = '';
-            document.getElementById('user').value = '';
-            document.getElementById('quantity').value = '';
-            startScanner(); // Restart camera
-          } else {
-            throw new Error("Server error");
-          }
-        })
-        .catch(err => {
-          console.error("Fetch error:", err);
-          document.getElementById('result').innerText = '❌ Error sending data.';
-        });
+      .then(() => {
+        document.getElementById("result").innerHTML = `✅ Submitted:<br>📦 Barcode: ${barcode}<br>👤 User: ${user}<br>📊 Quantity: ${quantity}`;
+        document.getElementById("user").value = "";
+        document.getElementById("quantity").value = "";
+        document.getElementById("barcode").value = "";
+        startScanner(); // restart camera after submission
+      })
+      .catch((err) => {
+        console.error("Send error:", err);
+        document.getElementById("result").innerText = "❌ Error sending data.";
+      });
     }
 
-    window.onload = () => {
-      startScanner();
-    };
+    window.onload = startScanner;
   </script>
 </body>
 </html>
