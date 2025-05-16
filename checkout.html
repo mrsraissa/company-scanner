@@ -1,29 +1,22 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>📦 Inventory Check & Log</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://unpkg.com/@zxing/library@latest"></script>
-  <style>
-    body { font-family: Arial; text-align: center; padding: 20px; }
-    video { width: 100%; max-width: 300px; border: 1px solid #ccc; margin-bottom: 10px; }
-    input { padding: 8px; font-size: 16px; width: 80%; margin-bottom: 10px; }
-    button { padding: 10px 20px; font-size: 16px; }
-  </style>
-</head>
 <body>
   <h2>📦 <b>Inventory Check & Log</b></h2>
   <button onclick="goBack()" style="margin: 10px; padding: 10px 20px; font-size: 16px;">🔙 Back to Menu</button>
 
-  <video id="preview"></video><br>
+  <!-- ▶️ Start Scanning Button -->
+  <button onclick="startScanner()" id="startScanBtn" style="margin: 10px; padding: 10px 20px; font-size: 16px;">▶️ Start Scanning</button>
 
-  <label>Scanned Barcode:</label><br>
-  <input type="text" id="barcode" readonly><br>
+  <!-- Hidden scanner section -->
+  <div id="scannerUI" style="display:none;">
+    <video id="preview"></video><br>
 
-  <label>Quantity:</label><br>
-  <input type="number" id="quantity"><br>
+    <label>Scanned Barcode:</label><br>
+    <input type="text" id="barcode" readonly><br>
 
-  <button onclick="submitData()">✅ Submit</button>
+    <label>Quantity:</label><br>
+    <input type="number" id="quantity"><br>
+
+    <button onclick="submitData()">✅ Submit</button>
+  </div>
 
   <div id="result" style="margin-top:15px; font-size:16px;"></div>
 
@@ -33,6 +26,9 @@
     const barcodeInput = document.getElementById('barcode');
 
     function startScanner() {
+      document.getElementById('startScanBtn').style.display = 'none';
+      document.getElementById('scannerUI').style.display = 'block';
+
       codeReader.decodeFromConstraints(
         {
           video: { facingMode: { exact: "environment" } }
@@ -81,10 +77,12 @@
         document.getElementById("result").innerText = "❌ Error sending data.";
       });
     }
- function goBack() {
-    window.location.href = 'index.html';
-  }
-    window.onload = startScanner;
+
+    function goBack() {
+      window.location.href = 'index.html';
+    }
+
+    // No scanner on page load anymore
+    // window.onload = startScanner;
   </script>
 </body>
-</html>
