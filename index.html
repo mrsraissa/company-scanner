@@ -26,19 +26,24 @@
   <div id="output" style="margin-top:20px; color:green;"></div>
 
   <script>
-    const codeReader = new ZXingBrowser.BrowserMultiFormatReader();
-    const previewElem = document.getElementById('preview');
+    let codeReader;
+    let controls;
 
-    let scanning = true;
-
-    codeReader.decodeFromVideoDevice(null, previewElem, (result, err, controls) => {
-      if (result && scanning) {
-        document.getElementById('barcode').value = result.text;
-        document.getElementById('extra-fields').style.display = 'block';
-        scanning = false;
-        controls.stop(); // ✅ Stop the camera
+    async function startScanner() {
+      codeReader = new ZXingBrowser.BrowserMultiFormatReader();
+      try {
+        controls = await codeReader.decodeFromVideoDevice(null, 'preview', (result, error, control) => {
+          if (result) {
+            document.getElementById('barcode').value = result.text;
+            document.getElementById('extra-fields').style.display = 'block';
+            control.stop(); // Stop camera after successful scan
+          }
+        });
+      } catch (e) {
+        document.getElementById('output').innerText = '🚫 Could not access the camera.';
+        console.error(e);
       }
-    });
+    }
 
     function submitLog() {
       const barcode = document.getElementById('barcode').value;
@@ -46,28 +51,27 @@
       const quantity = document.getElementById('quantity').value;
 
       if (!barcode || !user || !quantity) {
-        document.getElementById('output').innerText = '⚠️ Please complete all fields.';
+        document.getElementById('output').innerText = '⚠️ Please fill in all fields.';
         return;
       }
 
-      document.getElementById('output').innerHTML =
-        `✅ Submitted:<br>📦 ${barcode}<br>👤 ${user}<br>📊 ${quantity}`;
+      // Display log result
+      document.getElementById('output').innerHTML = `
+        ✅ Submitted:<br>📦 ${barcode}<br>👤 ${user}<br>📊 ${quantity}
+      `;
 
-      // Reset form
+      // Clear form
       document.getElementById('barcode').value = '';
       document.getElementById('user').value = '';
       document.getElementById('quantity').value = '';
       document.getElementById('extra-fields').style.display = 'none';
-      scanning = true;
-      codeReader.decodeFromVideoDevice(null, previewElem, (result, err, controls) => {
-        if (result && scanning) {
-          document.getElementById('barcode').value = result.text;
-          document.getElementById('extra-fields').style.display = 'block';
-          scanning = false;
-          controls.stop();
-        }
-      });
+
+      // Restart camera
+      if (controls) controls.stop();
+      startScanner();
     }
+
+    window.onload = () => startScanner();
   </script>
 </body>
 </html>
