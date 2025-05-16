@@ -69,6 +69,24 @@
           if (result) {
             barcodeInput.value = result.text;
             document.getElementById("result").innerText = `✅ Barcode Scanned: ${result.text}`;
+            const canvas = document.getElementById('overlay');
+            const video = previewElem;
+canvas.width = video.videoWidth;
+canvas.height = video.videoHeight;
+const ctx = canvas.getContext('2d');
+
+// simple green box in the center
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+ctx.strokeStyle = 'limegreen';
+ctx.lineWidth = 4;
+const boxWidth = canvas.width * 0.6;
+const boxHeight = canvas.height * 0.2;
+ctx.strokeRect(
+  (canvas.width - boxWidth) / 2,
+  (canvas.height - boxHeight) / 2,
+  boxWidth,
+  boxHeight
+);
             codeReader.reset(); // stop after one scan
           }
         }
