@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>📦 Inventory Logger</title>
+  <title>📦 Inventory Scanner</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://unpkg.com/@zxing/browser@0.0.9/umd/index.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@zxing/browser@0.0.10/umd/index.min.js"></script>
 </head>
 <body style="font-family: Arial; text-align: center; padding: 20px;">
   <h2>📦 Inventory Check & Log</h2>
@@ -30,18 +30,20 @@
     let controls;
 
     async function startScanner() {
-      codeReader = new ZXingBrowser.BrowserMultiFormatReader();
+      const ZXing = window.ZXingBrowser;
+      codeReader = new ZXing.BrowserMultiFormatReader();
+
       try {
         controls = await codeReader.decodeFromVideoDevice(null, 'preview', (result, error, control) => {
           if (result) {
             document.getElementById('barcode').value = result.text;
             document.getElementById('extra-fields').style.display = 'block';
-            control.stop(); // Stop camera after successful scan
+            control.stop(); // Stop after first scan
           }
         });
-      } catch (e) {
-        document.getElementById('output').innerText = '🚫 Could not access the camera.';
-        console.error(e);
+      } catch (err) {
+        document.getElementById('output').innerText = '🚫 Camera not available or permission denied.';
+        console.error(err);
       }
     }
 
@@ -55,18 +57,20 @@
         return;
       }
 
-      // Display log result
       document.getElementById('output').innerHTML = `
-        ✅ Submitted:<br>📦 ${barcode}<br>👤 ${user}<br>📊 ${quantity}
+        ✅ Submitted:<br>
+        📦 ${barcode}<br>
+        👤 ${user}<br>
+        📊 ${quantity}
       `;
 
-      // Clear form
+      // Clear fields
       document.getElementById('barcode').value = '';
       document.getElementById('user').value = '';
       document.getElementById('quantity').value = '';
       document.getElementById('extra-fields').style.display = 'none';
 
-      // Restart camera
+      // Restart scanner
       if (controls) controls.stop();
       startScanner();
     }
