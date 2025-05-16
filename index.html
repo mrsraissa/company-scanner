@@ -7,47 +7,39 @@
   <style>
     body { font-family: Arial; text-align: center; padding: 20px; }
     video { width: 100%; max-width: 300px; border: 1px solid #ccc; margin-bottom: 10px; }
-    input { padding: 8px; font-size: 16px; width: 80%; margin-bottom: 10px; }
-    button { padding: 10px 20px; font-size: 16px; }
+    input, button { padding: 10px; font-size: 16px; width: 90%; margin: 5px 0; }
+    #result { margin-top: 15px; font-size: 16px; }
   </style>
 </head>
 <body>
-  <h2>📦 <b>Inventory Check & Log</b></h2>
+  <h2>📦 Inventory Check & Log</h2>
 
   <video id="preview"></video>
 
-  <br>
-  <label>Scanned Barcode:</label><br>
-  <input type="text" id="barcode" readonly><br>
-
-  <label>Your Name:</label><br>
-  <input type="text" id="user"><br>
-
-  <label>Quantity:</label><br>
-  <input type="number" id="quantity"><br>
+  <input type="text" id="barcode" placeholder="Scanned Barcode" readonly>
+  <input type="text" id="user" placeholder="Enter Your Name">
+  <input type="number" id="quantity" placeholder="Enter Quantity">
 
   <button onclick="submitData()">✅ Submit</button>
 
-  <div id="result" style="margin-top:15px; font-size:16px;"></div>
+  <div id="result"></div>
 
   <script>
-    let selectedDeviceId;
     const codeReader = new ZXing.BrowserMultiFormatReader();
-    const previewElem = document.getElementById('preview');
+    const videoElement = document.getElementById('preview');
     const barcodeInput = document.getElementById('barcode');
 
-    function startScanner() {
+    function startCamera() {
       codeReader
         .listVideoInputDevices()
-        .then(videoInputDevices => {
-          selectedDeviceId = videoInputDevices[0].deviceId;
-
-          return codeReader.decodeOnceFromVideoDevice(selectedDeviceId, previewElem);
+        .then(devices => {
+          if (devices.length === 0) throw new Error("No camera found");
+          return codeReader.decodeOnceFromVideoDevice(devices[0].deviceId, videoElement);
         })
         .then(result => {
           barcodeInput.value = result.text;
-          document.getElementById('result').innerText = `✅ Barcode Scanned: ${result.text}`;
-          codeReader.reset(); // closes the camera
+          document.getElementById('result').innerText = `✅ Scanned: ${result.text}`;
+          codeReader.reset(); // stop camera after scan
         })
         .catch(err => {
           console.error(err);
@@ -55,34 +47,41 @@
         });
     }
 
-    <script>
-  function submitData() {
-    const user = document.getElementById('user').value;
-    const qty = document.getElementById('quantity').value;
-    const code = document.getElementById('barcode').value;
+    function submitData() {
+      const barcode = barcodeInput.value.trim();
+      const user = document.getElementById('user').value.trim();
+      const quantity = document.getElementById('quantity').value.trim();
 
-    if (!user || !qty || !code) {
-      document.getElementById('result').innerText = '⚠️ Please fill out all fields.';
-      return;
+      if (!barcode || !user || !quantity) {
+        document.getElementById('result').innerText = '⚠️ Please fill all fields.';
+        return;
+      }
+
+      fetch('https://script.google.com/macros/s/AKfycbx_Bl4QAbqVSZndyQT97xMBKow-8AjLC3A6oHHbpGAziaIOCi1Mvqqnt9ofYA4vT9gUvA/exec', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ barcode, user, quantity })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          document.getElementById('result').innerText = '✅ Successfully submitted!';
+          barcodeInput.value = '';
+          document.getElementById('user').value = '';
+          document.getElementById('quantity').value = '';
+          startCamera(); // restart camera for next scan
+        } else {
+          document.getElementById('result').innerText = '❌ Server error: ' + data.message;
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        document.getElementById('result').innerText = '❌ Error sending data.';
+      });
     }
 
-    fetch('https://script.google.com/macros/s/AKfycbx_Bl4QAbqVSZndyQT97xMBKow-8AjLC3A6oHHbpGAziaIOCi1Mvqqnt9ofYA4vT9gUvA/exec', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user: user, quantity: qty, barcode: code })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.status === 'success') {
-        document.getElementById('result').innerHTML =
-          `✅ Submitted:<br>📦 Barcode: ${code}<br>👤 User: ${user}<br>📊 Quantity: ${qty}`;
-      } else {
-        document.getElementById('result').innerText = '❌ Server error: ' + data.message;
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      document.getElementById('result').innerText = '❌ Error sending data.';
-    });
-  }
-</script>
+    // Start on load
+    window.onload = startCamera;
+  </script>
+</body>
+</html>
