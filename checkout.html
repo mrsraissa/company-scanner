@@ -43,7 +43,7 @@
         (result, err) => {
           if (result) {
             barcodeInput.value = result.text;
-            document.getElementById("result").innerText = ✅ Barcode Scanned: ${result.text};
+            document.getElementById("result").innerText = `✅ Barcode Scanned: ${result.text}`;
             codeReader.reset(); // stop the camera
           }
         }
@@ -69,10 +69,11 @@
         headers: {
           "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: user=${encodeURIComponent(user)}&quantity=${encodeURIComponent(quantity)}&barcode=${encodeURIComponent(barcode)}
+        body: `user=${encodeURIComponent(user)}&quantity=${encodeURIComponent(quantity)}&barcode=${encodeURIComponent(barcode)}`
       })
       .then(() => {
-        document.getElementById("result").innerHTML = ✅ Submitted:<br>📦 Barcode: ${barcode}<br>👤 User: ${user}<br>📊 Quantity: ${quantity};
+        document.getElementById("result").innerHTML = 
+          `✅ Submitted:<br>📦 Barcode: ${barcode}<br>👤 User: ${user}<br>📊 Quantity: ${quantity}`;
         document.getElementById("user").value = "";
         document.getElementById("quantity").value = "";
         document.getElementById("barcode").value = "";
