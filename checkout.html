@@ -11,25 +11,55 @@
       padding: 20px;
       font-size: 18px;
     }
-    #scannerWrapper {
-      position: relative;
-      display: inline-block;
-      width: 100%;
-      max-width: 300px;
-    }
-    video, canvas {
-      width: 100%;
-      height: auto;
-      border: 1px solid #ccc;
-    }
     input, button {
       font-size: 18px;
       padding: 12px;
       width: 80%;
       margin: 10px 0;
     }
+    video {
+      width: 100%;
+      max-width: 300px;
+      border: 1px solid #ccc;
+    }
     #scannerUI {
       display: none;
+    }
+    #scannerWrapper {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+      max-width: 300px;
+    }
+    #scanOverlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .scan-box {
+      position: absolute;
+      top: 40%;
+      left: 10%;
+      width: 80%;
+      height: 20%;
+      border: 2px dashed white;
+      box-sizing: border-box;
+    }
+    .scan-line {
+      position: absolute;
+      top: 50%;
+      left: 10%;
+      width: 80%;
+      height: 2px;
+      background-color: red;
+      animation: scan-move 1.5s infinite alternate ease-in-out;
+    }
+    @keyframes scan-move {
+      from { top: 40%; }
+      to   { top: 60%; }
     }
   </style>
 </head>
@@ -37,13 +67,18 @@
   <h2>📦 <b>Inventory Check & Log</b></h2>
   <button onclick="goBack()">🔙 Back to Menu</button><br><br>
 
+  <!-- ▶️ Start Scan Button -->
   <button onclick="openScanner()" id="startScanBtn">▶️ Start Scanning</button>
 
+  <!-- Scanner Section -->
   <div id="scannerUI">
     <div id="scannerWrapper">
       <video id="preview"></video>
-      <canvas id="overlay" style="position: absolute; top: 0; left: 0;"></canvas>
-    </div>
+      <div id="scanOverlay">
+        <div class="scan-box"></div>
+        <div class="scan-line"></div>
+      </div>
+    </div><br>
 
     <label>Scanned Barcode:</label><br>
     <input type="text" id="barcode" readonly><br>
@@ -67,50 +102,21 @@
 
       codeReader = new ZXing.BrowserMultiFormatReader();
       codeReader.decodeFromConstraints(
-        { video: { facingMode: { exact: "environment" } } },
+        {
+          video: { facingMode: { exact: "environment" } }
+        },
         previewElem,
         (result, err) => {
           if (result) {
             barcodeInput.value = result.text;
             document.getElementById("result").innerText = `✅ Barcode Scanned: ${result.text}`;
-            drawGreenBox();
-            setTimeout(() => clearGreenBox(), 1500);
-            codeReader.reset();
+            codeReader.reset(); // stop after one scan
           }
         }
       ).catch(err => {
         console.error(err);
         document.getElementById("result").innerText = "❌ Error starting camera.";
       });
-    }
-
-    function drawGreenBox() {
-      const canvas = document.getElementById('overlay');
-      const video = document.getElementById('preview');
-      const ctx = canvas.getContext('2d');
-
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.strokeStyle = 'limegreen';
-      ctx.lineWidth = 4;
-
-      const boxWidth = canvas.width * 0.6;
-      const boxHeight = canvas.height * 0.2;
-
-      ctx.strokeRect(
-        (canvas.width - boxWidth) / 2,
-        (canvas.height - boxHeight) / 2,
-        boxWidth,
-        boxHeight
-      );
-    }
-
-    function clearGreenBox() {
-      const canvas = document.getElementById('overlay');
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
     function submitData() {
@@ -134,6 +140,7 @@
       .then(() => {
         document.getElementById("result").innerHTML =
           `✅ Submitted:<br>📦 Barcode: ${barcode}<br>👤 User: ${user}<br>📊 Quantity: ${quantity}`;
+
         document.getElementById("quantity").value = "";
         document.getElementById("barcode").value = "";
 
