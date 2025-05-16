@@ -96,14 +96,18 @@
         },
         body: `user=${encodeURIComponent(user)}&quantity=${encodeURIComponent(quantity)}&barcode=${encodeURIComponent(barcode)}`
       })
-      .then(() => {
-        document.getElementById("result").innerHTML =
-          `✅ Submitted:<br>📦 Barcode: ${barcode}<br>👤 User: ${user}<br>📊 Quantity: ${quantity}`;
-        document.getElementById("quantity").value = "";
-        document.getElementById("barcode").value = "";
-        openScanner(); // restart camera
-      })
-      .catch((err) => {
+      ..then(() => {
+  document.getElementById("result").innerHTML =
+    `✅ Submitted:<br>📦 Barcode: ${barcode}<br>👤 User: ${user}<br>📊 Quantity: ${quantity}`;
+
+  document.getElementById("quantity").value = "";
+  document.getElementById("barcode").value = "";
+
+  // 👇 Hide scanner and show Start Scan button again
+  document.getElementById("scannerUI").style.display = "none";
+  document.getElementById("startScanBtn").style.display = "inline-block";
+})
+        .catch((err) => {
         console.error("Send error:", err);
         document.getElementById("result").innerText = "❌ Error sending data.";
       });
