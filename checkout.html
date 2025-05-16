@@ -58,7 +58,7 @@
     <label>Quantity:</label><br>
     <input type="number" id="quantity"><br>
 
-    <button onclick="submitData()">✅ Submit</button><br>
+    <button id="submitBtn" onclick="submitData()">✅ Submit</button><br>
     <button onclick="openScanner()">🔁 Scan Again</button>
   </div>
 
@@ -99,12 +99,18 @@
     }
 
     function submitData() {
+      const submitBtn = document.getElementById("submitBtn");
+      submitBtn.disabled = true;
+      submitBtn.innerText = "⏳ Submitting...";
+
       const user = localStorage.getItem("employeeName") || "Unknown";
       const quantity = document.getElementById("quantity").value.trim();
       const barcode = document.getElementById("barcode").value.trim();
 
       if (!user || !quantity || !barcode) {
         document.getElementById("result").innerText = "⚠️ Please fill out all fields.";
+        submitBtn.disabled = false;
+        submitBtn.innerText = "✅ Submit";
         return;
       }
 
@@ -129,6 +135,10 @@
       .catch((err) => {
         console.error("Send error:", err);
         document.getElementById("result").innerText = "❌ Error sending data.";
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "✅ Submit";
       });
     }
 
