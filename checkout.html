@@ -66,6 +66,7 @@
 
   <script>
     let codeReader;
+    let lastProductName = "";
     const previewElem = document.getElementById('preview');
     const barcodeInput = document.getElementById('barcode');
 
@@ -83,7 +84,8 @@
             .then(res => res.json())
             .then(data => {
               if (data.status === "found") {
-                document.getElementById("result").innerText = `✅ ${data.product} found!`;
+                lastProductName = data.product;
+                document.getElementById("result").innerText = `✅ ${lastProductName} found!`;
               } else {
                 document.getElementById("result").innerText = "❌ Product not found in inventory.";
               }
@@ -124,7 +126,7 @@
       })
       .then(() => {
         document.getElementById("result").innerHTML =
-          `✅ Submitted:<br>🗖️ Barcode: ${barcode}<br>👤 User: ${user}<br>📊 Quantity: ${quantity}`;
+          `✅ Submitted:<br>📦 Product: ${lastProductName || barcode}<br>👤 User: ${user}<br>📊 Quantity: ${quantity}`;
 
         document.getElementById("quantity").value = "";
         document.getElementById("barcode").value = "";
