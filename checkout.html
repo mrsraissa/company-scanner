@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>📦 Inventory Check & Log</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://unpkg.com/@zxing/library@latest"></script>
+  <style>
+    body { font-family: Arial; text-align: center; padding: 20px; }
+    video { width: 100%; max-width: 300px; border: 1px solid #ccc; margin-bottom: 10px; }
+    input { padding: 8px; font-size: 16px; width: 80%; margin-bottom: 10px; }
+    button { padding: 10px 20px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h2>📦 <b>Inventory Check & Log</b></h2>
+
+  <video id="preview"></video><br>
+
+  <label>Scanned Barcode:</label><br>
+  <input type="text" id="barcode" readonly><br>
+
+  <label>Your Name:</label><br>
+  <input type="text" id="user"><br>
+
+  <label>Quantity:</label><br>
+  <input type="number" id="quantity"><br>
+
+  <button onclick="submitData()">✅ Submit</button>
+
+  <div id="result" style="margin-top:15px; font-size:16px;"></div>
+
+  <script>
+    const codeReader = new ZXing.BrowserMultiFormatReader();
+    const previewElem = document.getElementById('preview');
+    const barcodeInput = document.getElementById('barcode');
+
+    function startScanner() {
+      codeReader.decodeFromConstraints(
+        {
+          video: { facingMode: { exact: "environment" } }
+        },
+        previewElem,
+        (result, err) => {
+          if (result) {
+            barcodeInput.value = result.text;
+            document.getElementById("result").innerText = ✅ Barcode Scanned: ${result.text};
+            codeReader.reset(); // stop the camera
+          }
+        }
+      ).catch((err) => {
+        console.error("Camera init failed:", err);
+        document.getElementById("result").innerText = "❌ Error starting camera.";
+      });
+    }
+
+    function submitData() {
+      const user = document.getElementById("user").value.trim();
+      const quantity = document.getElementById("quantity").value.trim();
+      const barcode = document.getElementById("barcode").value.trim();
+
+      if (!user || !quantity || !barcode) {
+        document.getElementById("result").innerText = "⚠️ Please fill out all fields.";
+        return;
+      }
+
+      fetch("https://script.google.com/macros/s/AKfycbx_Bl4QAbqVSZndyQT97xMBKow-8AjLC3A6oHHbpGAziaIOCi1Mvqqnt9ofYA4vT9gUvA/exec", {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: user=${encodeURIComponent(user)}&quantity=${encodeURIComponent(quantity)}&barcode=${encodeURIComponent(barcode)}
+      })
+      .then(() => {
+        document.getElementById("result").innerHTML = ✅ Submitted:<br>📦 Barcode: ${barcode}<br>👤 User: ${user}<br>📊 Quantity: ${quantity};
+        document.getElementById("user").value = "";
+        document.getElementById("quantity").value = "";
+        document.getElementById("barcode").value = "";
+        startScanner(); // restart camera after submission
+      })
+      .catch((err) => {
+        console.error("Send error:", err);
+        document.getElementById("result").innerText = "❌ Error sending data.";
+      });
+    }
+
+    window.onload = startScanner;
+  </script>
+</body>
+</html>
