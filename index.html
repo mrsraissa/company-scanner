@@ -15,27 +15,31 @@
   <br>
   <button onclick="saveName()">➡️ Enter</button>
 
-  <script>
-     function saveName() {
-    const name = document.getElementById('username').value.trim();
-    if (!name) {
-      alert("Please enter your name.");
-      return;
-    }
-    localStorage.setItem('employeeName', name);
-    window.location.href = 'checkout.html'; // ✅ updated
-  }
+  <div id="menu" style="display:none; margin-top:30px;">
+    <button onclick="location.href='checkout.html'">Check out / Registro de salida</button>
+  </div>
 
-  // Auto-redirect if already saved
-  if (localStorage.getItem('employeeName')) {
-    window.location.href = 'checkout.html'; // ✅ updated
-  }
+  <script>
+    function saveName() {
+      const name = document.getElementById('username').value.trim();
+      if (!name) {
+        alert("Please enter your name.");
+        return;
+      }
+      localStorage.setItem('employeeName', name);
+      showMenu();
+    }
+
+    function showMenu() {
+      document.getElementById('username').style.display = 'none';
+      document.querySelector('button').style.display = 'none';
+      document.getElementById('menu').style.display = 'block';
+    }
+
+    // Auto-show menu if name already saved
+    if (localStorage.getItem('employeeName')) {
+      showMenu();
+    }
   </script>
 </body>
 </html>
-<button onclick="location.href='checkout.html'">Check out / Registro de salida</button>
-<script>
- function goBack() {
-  window.location.href = "index.html";
-}
-
