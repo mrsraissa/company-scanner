@@ -47,41 +47,38 @@
         });
     }
 
-    function submitData() {
-      const barcode = barcodeInput.value.trim();
-      const user = document.getElementById('user').value.trim();
-      const quantity = document.getElementById('quantity').value.trim();
+   function submitData() {
+  const user = document.getElementById('user').value.trim();
+  const qty = document.getElementById('quantity').value.trim();
+  const code = document.getElementById('barcode').value.trim();
 
-      if (!barcode || !user || !quantity) {
-        document.getElementById('result').innerText = '⚠️ Please fill all fields.';
-        return;
+  if (!user || !qty || !code) {
+    document.getElementById('result').innerText = '⚠️ Please fill out all fields.';
+    return;
+  }
+
+  fetch("https://script.google.com/macros/s/AKfycbx_Bl4QAbqVSZndyQT97xMBKow-8AjLC3A6oHHbpGAziaIOCi1Mvqqnt9ofYA4vT9gUvA/exec", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ barcode: code, user: user, quantity: qty }),
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("HTTP error");
+      return res.json();
+    })
+    .then((data) => {
+      if (data.status === "success") {
+        document.getElementById('result').innerHTML =
+          `✅ Submitted:<br>📦 Barcode: ${code}<br>👤 User: ${user}<br>📊 Quantity: ${qty}`;
+        document.getElementById('user').value = '';
+        document.getElementById('quantity').value = '';
+        document.getElementById('barcode').value = '';
+      } else {
+        throw new Error("Server error");
       }
-
-      fetch('https://script.google.com/macros/s/AKfycbx_Bl4QAbqVSZndyQT97xMBKow-8AjLC3A6oHHbpGAziaIOCi1Mvqqnt9ofYA4vT9gUvA/exec', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ barcode, user, quantity })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === 'success') {
-          document.getElementById('result').innerText = '✅ Successfully submitted!';
-          barcodeInput.value = '';
-          document.getElementById('user').value = '';
-          document.getElementById('quantity').value = '';
-          startCamera(); // restart camera for next scan
-        } else {
-          document.getElementById('result').innerText = '❌ Server error: ' + data.message;
-        }
-      })
-      .catch(error => {
-        console.error(error);
-        document.getElementById('result').innerText = '❌ Error sending data.';
-      });
-    }
-
-    // Start on load
-    window.onload = startCamera;
-  </script>
-</body>
-</html>
+    })
+    .catch((err) => {
+      console.error(err);
+      document.getElementById('result').innerText = '❌ Error sending data.';
+    });
+}
