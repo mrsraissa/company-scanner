@@ -13,13 +13,15 @@
   <label>Scanned Barcode:</label><br>
   <input type="text" id="barcode" readonly style="width:250px; padding:8px; font-size:16px;"><br><br>
 
-  <label>User Name:</label><br>
-  <input type="text" id="user" placeholder="Your name" style="width:250px; padding:8px;"><br><br>
+  <div id="extra-fields" style="display: none;">
+    <label>User Name:</label><br>
+    <input type="text" id="user" placeholder="Your name" style="width:250px; padding:8px;"><br><br>
 
-  <label>Quantity:</label><br>
-  <input type="number" id="quantity" placeholder="Quantity" style="width:250px; padding:8px;"><br><br>
+    <label>Quantity:</label><br>
+    <input type="number" id="quantity" placeholder="Quantity" style="width:250px; padding:8px;"><br><br>
 
-  <button onclick="submitLog()">✅ Submit</button>
+    <button onclick="submitLog()">✅ Submit</button>
+  </div>
 
   <div id="output" style="margin-top:20px; color:green;"></div>
 
@@ -27,9 +29,14 @@
     const codeReader = new ZXingBrowser.BrowserMultiFormatReader();
     const previewElem = document.getElementById('preview');
 
-    codeReader.decodeFromVideoDevice(null, previewElem, (result, err) => {
-      if (result) {
+    let scanning = true;
+
+    codeReader.decodeFromVideoDevice(null, previewElem, (result, err, controls) => {
+      if (result && scanning) {
         document.getElementById('barcode').value = result.text;
+        document.getElementById('extra-fields').style.display = 'block';
+        scanning = false;
+        controls.stop(); // ✅ Stop the camera
       }
     });
 
@@ -47,8 +54,19 @@
         `✅ Submitted:<br>📦 ${barcode}<br>👤 ${user}<br>📊 ${quantity}`;
 
       // Reset form
+      document.getElementById('barcode').value = '';
       document.getElementById('user').value = '';
       document.getElementById('quantity').value = '';
+      document.getElementById('extra-fields').style.display = 'none';
+      scanning = true;
+      codeReader.decodeFromVideoDevice(null, previewElem, (result, err, controls) => {
+        if (result && scanning) {
+          document.getElementById('barcode').value = result.text;
+          document.getElementById('extra-fields').style.display = 'block';
+          scanning = false;
+          controls.stop();
+        }
+      });
     }
   </script>
 </body>
