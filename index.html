@@ -37,14 +37,22 @@
     const barcodeInput = document.getElementById('barcode');
 
     function startScanner() {
-      codeReader
-        .listVideoInputDevices()
-        .then(videoInputDevices => {
-          if (videoInputDevices.length === 0) {
-            document.getElementById('result').innerText = '❌ No camera found.';
-            return;
-          }
-          selectedDeviceId = videoInputDevices[0].deviceId;
+      codeReader.decodeFromConstraints(
+  {
+    video: {
+      facingMode: { exact: "environment" } // 🔄 use back camera
+    }
+  },
+  previewElem,
+  (result, err) => {
+    if (result) {
+      barcodeInput.value = result.text;
+      document.getElementById("result").innerText = `✅ Barcode Scanned: ${result.text}`;
+      codeReader.reset();
+    }
+  }
+);
+         selectedDeviceId = videoInputDevices[0].deviceId;
           codeReader.decodeOnceFromVideoDevice(selectedDeviceId, previewElem)
             .then(result => {
               barcodeInput.value = result.text;
