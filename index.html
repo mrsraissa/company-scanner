@@ -47,7 +47,7 @@
         .then(result => {
           barcodeInput.value = result.text;
           document.getElementById('result').innerText = `✅ Barcode Scanned: ${result.text}`;
-          codeReader.reset(); // close camera
+          codeReader.reset(); // closes the camera
         })
         .catch(err => {
           console.error(err);
@@ -65,10 +65,38 @@
         return;
       }
 
-      document.getElementById('result').innerHTML =
-        `✅ Submitted:<br>📦 Barcode: ${code}<br>👤 User: ${user}<br>📊 Quantity: ${qty}`;
-      
-      // TODO: here you can call a Google Sheets API or save locally
+      const data = {
+        barcode: code,
+        user: user,
+        quantity: qty
+      };
+
+      fetch('https://script.google.com/macros/s/AKfycbwJ8UwENktF_zvyvUohplXAK2pyMox42hK9Fjfu1q_bfSHoJvlPWOjj4OOlPBH3j3HSJA/exec', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(res => {
+        if (res.status === 'success') {
+          document.getElementById('result').innerHTML =
+            `✅ Submitted to Google Sheets:<br>📦 ${code}<br>👤 ${user}<br>📊 ${qty}`;
+
+          // Reset form
+          document.getElementById('barcode').value = '';
+          document.getElementById('user').value = '';
+          document.getElementById('quantity').value = '';
+          startScanner(); // Restart camera
+        } else {
+          document.getElementById('result').innerText = '❌ Submission failed.';
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        document.getElementById('result').innerText = '❌ Error sending data.';
+      });
     }
 
     window.onload = () => {
