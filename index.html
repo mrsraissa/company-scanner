@@ -55,53 +55,34 @@
         });
     }
 
-    function submitData() {
-      const user = document.getElementById('user').value;
-      const qty = document.getElementById('quantity').value;
-      const code = document.getElementById('barcode').value;
+    <script>
+  function submitData() {
+    const user = document.getElementById('user').value;
+    const qty = document.getElementById('quantity').value;
+    const code = document.getElementById('barcode').value;
 
-      if (!user || !qty || !code) {
-        document.getElementById('result').innerText = '⚠️ Please fill out all fields.';
-        return;
-      }
-
-      const data = {
-        barcode: code,
-        user: user,
-        quantity: qty
-      };
-
-      fetch('https://script.google.com/macros/s/AKfycbx_Bl4QAbqVSZndyQT97xMBKow-8AjLC3A6oHHbpGAziaIOCi1Mvqqnt9ofYA4vT9gUvA/exec', {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      .then(response => response.json())
-      .then(res => {
-        if (res.status === 'success') {
-          document.getElementById('result').innerHTML =
-            `✅ Submitted to Google Sheets:<br>📦 ${code}<br>👤 ${user}<br>📊 ${qty}`;
-
-          // Reset form
-          document.getElementById('barcode').value = '';
-          document.getElementById('user').value = '';
-          document.getElementById('quantity').value = '';
-          startScanner(); // Restart camera
-        } else {
-          document.getElementById('result').innerText = '❌ Submission failed.';
-        }
-      })
-      .catch(error => {
-        console.error(error);
-        document.getElementById('result').innerText = '❌ Error sending data.';
-      });
+    if (!user || !qty || !code) {
+      document.getElementById('result').innerText = '⚠️ Please fill out all fields.';
+      return;
     }
 
-    window.onload = () => {
-      startScanner();
-    };
-  </script>
-</body>
-</html>
+    fetch('https://script.google.com/macros/s/AKfycbx_Bl4QAbqVSZndyQT97xMBKow-8AjLC3A6oHHbpGAziaIOCi1Mvqqnt9ofYA4vT9gUvA/exec', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user: user, quantity: qty, barcode: code })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'success') {
+        document.getElementById('result').innerHTML =
+          `✅ Submitted:<br>📦 Barcode: ${code}<br>👤 User: ${user}<br>📊 Quantity: ${qty}`;
+      } else {
+        document.getElementById('result').innerText = '❌ Server error: ' + data.message;
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      document.getElementById('result').innerText = '❌ Error sending data.';
+    });
+  }
+</script>
