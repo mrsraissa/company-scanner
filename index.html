@@ -20,12 +20,14 @@
     <button onclick="saveName()">➡️ Enter</button>
   </div>
 
-  <!-- Main menu -->
+  <!-- Menu section -->
   <div id="menu">
     <h3>📋 Main Menu</h3>
-    <button onclick="location.href='checkout.html'">Check out / Registro de salida</button><br><br>
-    <button onclick="alert('Other feature coming soon')">📦 Product Return</button><br><br>
-    <button onclick="alert('Other feature coming soon')">🛠️ Technical Report</button>
+    <p>👤 Logged in as: <strong id="displayName"></strong></p>
+    <button onclick="location.href='checkout.html'">✅ Check out / Registro de salida</button><br><br>
+    <button onclick="alert('Coming soon')">📦 Product Return</button><br><br>
+    <button onclick="alert('Coming soon')">🛠️ Technical Report</button><br><br>
+    <button onclick="logout()">🚪 Logout</button>
   </div>
 
   <script>
@@ -40,16 +42,20 @@
     }
 
     function showMenu() {
-      document.getElementById('usernameSection').style.display = 'none';
-      document.getElementById('menu').style.display = 'block';
-    }
-
-    window.onload = () => {
-      if (localStorage.getItem('employeeName')) {
-        showMenu();
+      const name = localStorage.getItem('employeeName');
+      if (name) {
+        document.getElementById('usernameSection').style.display = 'none';
+        document.getElementById('menu').style.display = 'block';
+        document.getElementById('displayName').innerText = name;
       }
     }
+
+    function logout() {
+      localStorage.removeItem('employeeName');
+      location.reload();
+    }
+
+    window.onload = showMenu;
   </script>
 </body>
 </html>
-
