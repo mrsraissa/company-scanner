@@ -1,81 +1,79 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>📦 Inventory Scanner</title>
+  <title>📦 Inventory Check & Log</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://cdn.jsdelivr.net/npm/@zxing/browser@0.0.10/umd/index.min.js"></script>
+  <script src="https://unpkg.com/@zxing/library@latest"></script>
+  <style>
+    body { font-family: Arial; text-align: center; padding: 20px; }
+    video { width: 100%; max-width: 300px; border: 1px solid #ccc; margin-bottom: 10px; }
+    input { padding: 8px; font-size: 16px; width: 80%; margin-bottom: 10px; }
+    button { padding: 10px 20px; font-size: 16px; }
+  </style>
 </head>
-<body style="font-family: Arial; text-align: center; padding: 20px;">
-  <h2>📦 Inventory Check & Log</h2>
+<body>
+  <h2>📦 <b>Inventory Check & Log</b></h2>
 
-  <video id="preview" width="300" height="200" style="border:1px solid #ccc;"></video><br><br>
+  <video id="preview"></video>
 
+  <br>
   <label>Scanned Barcode:</label><br>
-  <input type="text" id="barcode" readonly style="width:250px; padding:8px; font-size:16px;"><br><br>
+  <input type="text" id="barcode" readonly><br>
 
-  <div id="extra-fields" style="display: none;">
-    <label>User Name:</label><br>
-    <input type="text" id="user" placeholder="Your name" style="width:250px; padding:8px;"><br><br>
+  <label>Your Name:</label><br>
+  <input type="text" id="user"><br>
 
-    <label>Quantity:</label><br>
-    <input type="number" id="quantity" placeholder="Quantity" style="width:250px; padding:8px;"><br><br>
+  <label>Quantity:</label><br>
+  <input type="number" id="quantity"><br>
 
-    <button onclick="submitLog()">✅ Submit</button>
-  </div>
+  <button onclick="submitData()">✅ Submit</button>
 
-  <div id="output" style="margin-top:20px; color:green;"></div>
+  <div id="result" style="margin-top:15px; font-size:16px;"></div>
 
   <script>
-    let codeReader;
-    let controls;
+    let selectedDeviceId;
+    const codeReader = new ZXing.BrowserMultiFormatReader();
+    const previewElem = document.getElementById('preview');
+    const barcodeInput = document.getElementById('barcode');
 
-    async function startScanner() {
-      const ZXing = window.ZXingBrowser;
-      codeReader = new ZXing.BrowserMultiFormatReader();
+    function startScanner() {
+      codeReader
+        .listVideoInputDevices()
+        .then(videoInputDevices => {
+          selectedDeviceId = videoInputDevices[0].deviceId;
 
-      try {
-        controls = await codeReader.decodeFromVideoDevice(null, 'preview', (result, error, control) => {
-          if (result) {
-            document.getElementById('barcode').value = result.text;
-            document.getElementById('extra-fields').style.display = 'block';
-            control.stop(); // Stop after first scan
-          }
+          return codeReader.decodeOnceFromVideoDevice(selectedDeviceId, previewElem);
+        })
+        .then(result => {
+          barcodeInput.value = result.text;
+          document.getElementById('result').innerText = `✅ Barcode Scanned: ${result.text}`;
+          codeReader.reset(); // close camera
+        })
+        .catch(err => {
+          console.error(err);
+          document.getElementById('result').innerText = '❌ Error accessing camera.';
         });
-      } catch (err) {
-        document.getElementById('output').innerText = '🚫 Camera not available or permission denied.';
-        console.error(err);
-      }
     }
 
-    function submitLog() {
-      const barcode = document.getElementById('barcode').value;
+    function submitData() {
       const user = document.getElementById('user').value;
-      const quantity = document.getElementById('quantity').value;
+      const qty = document.getElementById('quantity').value;
+      const code = document.getElementById('barcode').value;
 
-      if (!barcode || !user || !quantity) {
-        document.getElementById('output').innerText = '⚠️ Please fill in all fields.';
+      if (!user || !qty || !code) {
+        document.getElementById('result').innerText = '⚠️ Please fill out all fields.';
         return;
       }
 
-      document.getElementById('output').innerHTML = `
-        ✅ Submitted:<br>
-        📦 ${barcode}<br>
-        👤 ${user}<br>
-        📊 ${quantity}
-      `;
-
-      // Clear fields
-      document.getElementById('barcode').value = '';
-      document.getElementById('user').value = '';
-      document.getElementById('quantity').value = '';
-      document.getElementById('extra-fields').style.display = 'none';
-
-      // Restart scanner
-      if (controls) controls.stop();
-      startScanner();
+      document.getElementById('result').innerHTML =
+        `✅ Submitted:<br>📦 Barcode: ${code}<br>👤 User: ${user}<br>📊 Quantity: ${qty}`;
+      
+      // TODO: here you can call a Google Sheets API or save locally
     }
 
-    window.onload = () => startScanner();
+    window.onload = () => {
+      startScanner();
+    };
   </script>
 </body>
 </html>
