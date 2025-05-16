@@ -66,6 +66,18 @@
       }).catch(err => {
         console.error("Camera error:", err);
         document.getElementById("result").innerText = "❌ Error starting camera.";
+        fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(result.text)}`)
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === "found") {
+      document.getElementById("result").innerText = `✅ ${data.product} found!`;
+    } else {
+      document.getElementById("result").innerText = "❌ Product not found in inventory.";
+    }
+  })
+  .catch(() => {
+    document.getElementById("result").innerText = "❌ Error checking inventory.";
+  });
       });
 
       // 👆 tap to focus (experimental)
