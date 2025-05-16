@@ -20,26 +20,24 @@
   </div>
 
   <script>
-    function saveName() {
-      const name = document.getElementById('username').value.trim();
-      if (!name) {
-        alert("Please enter your name.");
-        return;
-      }
-      localStorage.setItem('employeeName', name);
-      showMenu();
+     function saveName() {
+    const name = document.getElementById('username').value.trim();
+    if (!name) {
+      alert("Please enter your name.");
+      return;
     }
-
-    function showMenu() {
-      document.getElementById('username').style.display = 'none';
-      document.querySelector('button').style.display = 'none';
-      document.getElementById('menu').style.display = 'block';
-    }
-
-    // Auto-show menu if name already saved
+    localStorage.setItem('employeeName', name);
+    showMenu();
+  }
+  function showMenu() {
+    document.getElementById('usernameSection').style.display = 'none';
+    document.getElementById('menu').style.display = 'block';
+  }
+  window.onload = () => {
     if (localStorage.getItem('employeeName')) {
       showMenu();
     }
-  </script>
+  }
+   </script>
 </body>
 </html>
