@@ -77,8 +77,9 @@
         throw new Error("Server error");
       }
     })
-    .catch((err) => {
-      console.error(err);
-      document.getElementById('result').innerText = '❌ Error sending data.';
-    });
+   .catch((err) => {
+  console.error("Error during fetch:", err);
+  document.getElementById('result').innerText = '❌ Failed to contact server.';
+});
+
 }
