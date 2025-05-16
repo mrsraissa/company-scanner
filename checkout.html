@@ -10,21 +10,36 @@
       text-align: center;
       padding: 20px;
       font-size: 18px;
+      background-color: #f9f9f9;
+    }
+    h2 {
+      margin-bottom: 10px;
     }
     video {
       width: 100%;
-      max-width: 300px;
-      border: 1px solid #ccc;
+      max-width: 320px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
       margin-bottom: 10px;
     }
     input, button {
       font-size: 18px;
       padding: 12px;
-      width: 80%;
+      width: 90%;
       margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
     }
     #scannerUI {
       display: none;
+      background-color: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -47,7 +62,7 @@
     <button onclick="openScanner()">🔁 Scan Again</button>
   </div>
 
-  <div id="result" style="margin-top:15px;"></div>
+  <div id="result"></div>
 
   <script>
     let codeReader;
@@ -61,7 +76,7 @@
       codeReader = new ZXing.BrowserMultiFormatReader();
       codeReader.decodeOnceFromVideoDevice(undefined, previewElem)
         .then(result => {
-          codeReader.reset(); // Stop camera immediately to avoid duplicate calls
+          codeReader.reset();
           barcodeInput.value = result.text;
 
           fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(result.text)}`)
