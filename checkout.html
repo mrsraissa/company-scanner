@@ -43,7 +43,8 @@
     <label>Quantity:</label><br>
     <input type="number" id="quantity"><br>
 
-    <button onclick="submitData()">✅ Submit</button>
+    <button onclick="submitData()">✅ Submit</button><br>
+    <button onclick="openScanner()">🔁 Scan Again</button>
   </div>
 
   <div id="result" style="margin-top:15px;"></div>
@@ -67,21 +68,20 @@
           if (result) {
             barcodeInput.value = result.text;
 
-            // Check product existence from Inventory sheet via Apps Script
             fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(result.text)}`)
               .then(res => res.json())
               .then(data => {
                 if (data.status === "found") {
                   document.getElementById("result").innerText = `✅ ${data.product} found!`;
+                  codeReader.reset();
                 } else {
                   document.getElementById("result").innerText = "❌ Product not found in inventory.";
+                  codeReader.reset();
                 }
               })
               .catch(() => {
                 document.getElementById("result").innerText = "❌ Error checking inventory.";
               });
-
-            codeReader.reset();
           }
         }
       ).catch(err => {
