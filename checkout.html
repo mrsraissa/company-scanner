@@ -72,7 +72,6 @@
       .then(() => {
         document.getElementById("result").innerHTML = 
           `✅ Submitted:<br>📦 Barcode: ${barcode}<br>👤 User: ${user}<br>📊 Quantity: ${quantity}`;
-        document.getElementById("user").value = "";
         document.getElementById("quantity").value = "";
         document.getElementById("barcode").value = "";
         startScanner(); // restart camera after submission
