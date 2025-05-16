@@ -16,20 +16,20 @@
   <button onclick="saveName()">➡️ Enter</button>
 
   <script>
-    function saveName() {
-      const name = document.getElementById('username').value.trim();
-      if (!name) {
-        alert("Please enter your name.");
-        return;
-      }
-      localStorage.setItem('employeeName', name);
-      window.location.href = 'scanner.html';
+     function saveName() {
+    const name = document.getElementById('username').value.trim();
+    if (!name) {
+      alert("Please enter your name.");
+      return;
     }
+    localStorage.setItem('employeeName', name);
+    window.location.href = 'checkout.html'; // ✅ updated
+  }
 
-    // Auto-redirect if already saved
-    if (localStorage.getItem('employeeName')) {
-      window.location.href = 'scanner.html';
-    }
+  // Auto-redirect if already saved
+  if (localStorage.getItem('employeeName')) {
+    window.location.href = 'checkout.html'; // ✅ updated
+  }
   </script>
 </body>
 </html>
