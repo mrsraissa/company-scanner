@@ -29,22 +29,16 @@
   </style>
 </head>
 <body>
-  <h2>📦 <b>Inventory Check & Log</b></h2>
+  <h2>📦 Inventory Check & Log</h2>
   <button onclick="goBack()">🔙 Back to Menu</button><br><br>
-
-  <!-- Start Scanning Button -->
   <button onclick="openScanner()" id="startScanBtn">▶️ Start Scanning</button>
 
-  <!-- Scanner Section -->
   <div id="scannerUI">
-    <video id="preview"></video><br>
-
+    <video id="preview" autoplay muted playsinline></video><br>
     <label>Scanned Barcode:</label><br>
     <input type="text" id="barcode" readonly><br>
-
     <label>Quantity:</label><br>
     <input type="number" id="quantity"><br>
-
     <button onclick="submitData()">✅ Submit</button>
   </div>
 
@@ -61,30 +55,27 @@
 
       codeReader = new ZXing.BrowserMultiFormatReader();
 
-      codeReader.decodeFromConstraints(
-        {
-          video: { facingMode: { exact: "environment" } }
-        },
-        previewElem,
-        (result, err) => {
-          if (result) {
-            barcodeInput.value = result.text;
-            document.getElementById("result").innerText = `✅ Barcode Scanned: ${result.text}`;
-            codeReader.reset(); // stop scanner after first result
-          }
+      codeReader.decodeFromConstraints({
+        video: { facingMode: { exact: "environment" } }
+      }, previewElem, (result, err) => {
+        if (result) {
+          barcodeInput.value = result.text;
+          document.getElementById("result").innerText = `✅ Barcode Scanned: ${result.text}`;
+          codeReader.reset(); // stop scan
         }
-      ).catch(err => {
-        console.error(err);
+      }).catch(err => {
+        console.error("Camera error:", err);
         document.getElementById("result").innerText = "❌ Error starting camera.";
       });
 
-      // 📸 Tap-to-focus support
+      // 👆 tap to focus (experimental)
       previewElem.addEventListener('click', () => {
-        const track = previewElem.srcObject?.getVideoTracks?.()[0];
-        const capabilities = track?.getCapabilities?.();
-        if (capabilities && capabilities.focusMode) {
-          track.applyConstraints({ advanced: [{ focusMode: "manual" }] })
-            .catch(e => console.log("Focus error:", e));
+        const track = previewElem?.srcObject?.getVideoTracks?.()[0];
+        if (track?.getCapabilities) {
+          const capabilities = track.getCapabilities();
+          if (capabilities.focusMode) {
+            track.applyConstraints({ advanced: [{ focusMode: "continuous" }] }).catch(e => console.warn(e));
+          }
         }
       });
     }
@@ -108,12 +99,9 @@
         body: `user=${encodeURIComponent(user)}&quantity=${encodeURIComponent(quantity)}&barcode=${encodeURIComponent(barcode)}`
       })
       .then(() => {
-        document.getElementById("result").innerHTML =
-          `✅ Submitted:<br>📦 Barcode: ${barcode}<br>👤 User: ${user}<br>📊 Quantity: ${quantity}`;
-
+        document.getElementById("result").innerHTML = `✅ Submitted:<br>📦 Barcode: ${barcode}<br>👤 User: ${user}<br>📊 Quantity: ${quantity}`;
         document.getElementById("quantity").value = "";
         document.getElementById("barcode").value = "";
-
         document.getElementById("scannerUI").style.display = "none";
         document.getElementById("startScanBtn").style.display = "inline-block";
       })
@@ -124,7 +112,7 @@
     }
 
     function goBack() {
-      window.location.href = 'index.html';
+      window.location.href = "index.html";
     }
   </script>
 </body>
