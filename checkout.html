@@ -1,12 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>📦 Inventory Check & Log</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://unpkg.com/@zxing/library@latest"></script>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      padding: 20px;
+      font-size: 18px; /* 🔍 Increased font size */
+    }
+    video {
+      width: 100%;
+      max-width: 300px;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+    }
+    input, button {
+      font-size: 18px; /* 🔍 Increased font size */
+      padding: 12px;
+      width: 80%;
+      margin: 10px 0;
+    }
+    #scannerUI {
+      display: none;
+    }
+  </style>
+</head>
 <body>
   <h2>📦 <b>Inventory Check & Log</b></h2>
-  <button onclick="goBack()" style="margin: 10px; padding: 10px 20px; font-size: 16px;">🔙 Back to Menu</button>
+  <button onclick="goBack()">🔙 Back to Menu</button><br><br>
 
-  <!-- ▶️ Start Scanning Button -->
-  <button onclick="startScanner()" id="startScanBtn" style="margin: 10px; padding: 10px 20px; font-size: 16px;">▶️ Start Scanning</button>
+  <!-- ▶️ Start Scan Button -->
+  <button onclick="openScanner()" id="startScanBtn">▶️ Start Scanning</button>
 
-  <!-- Hidden scanner section -->
-  <div id="scannerUI" style="display:none;">
+  <!-- Scanner Section -->
+  <div id="scannerUI">
     <video id="preview"></video><br>
 
     <label>Scanned Barcode:</label><br>
@@ -18,17 +48,18 @@
     <button onclick="submitData()">✅ Submit</button>
   </div>
 
-  <div id="result" style="margin-top:15px; font-size:16px;"></div>
+  <div id="result" style="margin-top:15px;"></div>
 
   <script>
-    const codeReader = new ZXing.BrowserMultiFormatReader();
+    let codeReader;
     const previewElem = document.getElementById('preview');
     const barcodeInput = document.getElementById('barcode');
 
-    function startScanner() {
+    function openScanner() {
       document.getElementById('startScanBtn').style.display = 'none';
       document.getElementById('scannerUI').style.display = 'block';
 
+      codeReader = new ZXing.BrowserMultiFormatReader();
       codeReader.decodeFromConstraints(
         {
           video: { facingMode: { exact: "environment" } }
@@ -38,11 +69,11 @@
           if (result) {
             barcodeInput.value = result.text;
             document.getElementById("result").innerText = `✅ Barcode Scanned: ${result.text}`;
-            codeReader.reset(); // stop the camera
+            codeReader.reset(); // stop after one scan
           }
         }
-      ).catch((err) => {
-        console.error("Camera init failed:", err);
+      ).catch(err => {
+        console.error(err);
         document.getElementById("result").innerText = "❌ Error starting camera.";
       });
     }
@@ -66,11 +97,11 @@
         body: `user=${encodeURIComponent(user)}&quantity=${encodeURIComponent(quantity)}&barcode=${encodeURIComponent(barcode)}`
       })
       .then(() => {
-        document.getElementById("result").innerHTML = 
+        document.getElementById("result").innerHTML =
           `✅ Submitted:<br>📦 Barcode: ${barcode}<br>👤 User: ${user}<br>📊 Quantity: ${quantity}`;
         document.getElementById("quantity").value = "";
         document.getElementById("barcode").value = "";
-        startScanner(); // restart camera after submission
+        openScanner(); // restart camera
       })
       .catch((err) => {
         console.error("Send error:", err);
@@ -81,8 +112,6 @@
     function goBack() {
       window.location.href = 'index.html';
     }
-
-    // No scanner on page load anymore
-    // window.onload = startScanner;
   </script>
 </body>
+</html>
