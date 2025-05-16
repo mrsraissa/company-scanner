@@ -7,79 +7,99 @@
   <style>
     body { font-family: Arial; text-align: center; padding: 20px; }
     video { width: 100%; max-width: 300px; border: 1px solid #ccc; margin-bottom: 10px; }
-    input, button { padding: 10px; font-size: 16px; width: 90%; margin: 5px 0; }
-    #result { margin-top: 15px; font-size: 16px; }
+    input { padding: 8px; font-size: 16px; width: 80%; margin-bottom: 10px; }
+    button { padding: 10px 20px; font-size: 16px; }
   </style>
 </head>
 <body>
-  <h2>📦 Inventory Check & Log</h2>
+  <h2>📦 <b>Inventory Check & Log</b></h2>
 
-  <video id="preview"></video>
+  <video id="preview"></video><br>
 
-  <input type="text" id="barcode" placeholder="Scanned Barcode" readonly>
-  <input type="text" id="user" placeholder="Enter Your Name">
-  <input type="number" id="quantity" placeholder="Enter Quantity">
+  <label>Scanned Barcode:</label><br>
+  <input type="text" id="barcode" readonly><br>
+
+  <label>Your Name:</label><br>
+  <input type="text" id="user"><br>
+
+  <label>Quantity:</label><br>
+  <input type="number" id="quantity"><br>
 
   <button onclick="submitData()">✅ Submit</button>
 
-  <div id="result"></div>
+  <div id="result" style="margin-top:15px; font-size:16px;"></div>
 
   <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbx_Bl4QAbqVSZndyQT97xMBKow-8AjLC3A6oHHbpGAziaIOCi1Mvqqnt9ofYA4vT9gUvA/exec";
+    let selectedDeviceId;
     const codeReader = new ZXing.BrowserMultiFormatReader();
-    const videoElement = document.getElementById('preview');
+    const previewElem = document.getElementById('preview');
     const barcodeInput = document.getElementById('barcode');
 
-    function startCamera() {
+    function startScanner() {
       codeReader
         .listVideoInputDevices()
-        .then(devices => {
-          if (devices.length === 0) throw new Error("No camera found");
-          return codeReader.decodeOnceFromVideoDevice(devices[0].deviceId, videoElement);
-        })
-        .then(result => {
-          barcodeInput.value = result.text;
-          document.getElementById('result').innerText = `✅ Scanned: ${result.text}`;
-          codeReader.reset(); // stop camera after scan
+        .then(videoInputDevices => {
+          if (videoInputDevices.length === 0) {
+            document.getElementById('result').innerText = '❌ No camera found.';
+            return;
+          }
+          selectedDeviceId = videoInputDevices[0].deviceId;
+          codeReader.decodeOnceFromVideoDevice(selectedDeviceId, previewElem)
+            .then(result => {
+              barcodeInput.value = result.text;
+              document.getElementById('result').innerText = `✅ Scanned: ${result.text}`;
+              codeReader.reset(); // Stop camera
+            })
+            .catch(err => {
+              console.error(err);
+              document.getElementById('result').innerText = '❌ Failed to scan barcode.';
+            });
         })
         .catch(err => {
-          console.error(err);
-          document.getElementById('result').innerText = '❌ Error accessing camera.';
+          console.error("Camera error:", err);
+          document.getElementById('result').innerText = '❌ Camera access error.';
         });
     }
 
-   function submitData() {
-  const user = document.getElementById('user').value.trim();
-  const qty = document.getElementById('quantity').value.trim();
-  const code = document.getElementById('barcode').value.trim();
+    function submitData() {
+      const user = document.getElementById('user').value.trim();
+      const qty = document.getElementById('quantity').value.trim();
+      const code = document.getElementById('barcode').value.trim();
 
-  if (!user || !qty || !code) {
-    document.getElementById('result').innerText = '⚠️ Please fill out all fields.';
-    return;
-  }
-
-  fetch("https://script.google.com/macros/s/AKfycbx_Bl4QAbqVSZndyQT97xMBKow-8AjLC3A6oHHbpGAziaIOCi1Mvqqnt9ofYA4vT9gUvA/exec", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ barcode: code, user: user, quantity: qty }),
-  })
-    .then((res) => {
-      if (!res.ok) throw new Error("HTTP error");
-      return res.json();
-    })
-    .then((data) => {
-      if (data.status === "success") {
-        document.getElementById('result').innerHTML =
-          `✅ Submitted:<br>📦 Barcode: ${code}<br>👤 User: ${user}<br>📊 Quantity: ${qty}`;
-        document.getElementById('user').value = '';
-        document.getElementById('quantity').value = '';
-        document.getElementById('barcode').value = '';
-      } else {
-        throw new Error("Server error");
+      if (!user || !qty || !code) {
+        document.getElementById('result').innerText = '⚠️ Please fill all fields.';
+        return;
       }
-    })
-   .catch((err) => {
-  console.error("Error during fetch:", err);
-  document.getElementById('result').innerText = '❌ Failed to contact server.';
-});
 
-}
+      fetch(scriptURL, {
+        method: 'POST',
+        body: new URLSearchParams({ user, quantity: qty, barcode: code }),
+      })
+        .then(res => {
+          if (!res.ok) throw new Error("HTTP error: " + res.status);
+          return res.json();
+        })
+        .then(data => {
+          if (data.status === "success") {
+            document.getElementById('result').innerText = '✅ Submitted!';
+            document.getElementById('barcode').value = '';
+            document.getElementById('user').value = '';
+            document.getElementById('quantity').value = '';
+            startScanner(); // Restart camera
+          } else {
+            throw new Error("Server error");
+          }
+        })
+        .catch(err => {
+          console.error("Fetch error:", err);
+          document.getElementById('result').innerText = '❌ Error sending data.';
+        });
+    }
+
+    window.onload = () => {
+      startScanner();
+    };
+  </script>
+</body>
+</html>
