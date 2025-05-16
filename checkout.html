@@ -55,7 +55,7 @@
     }
 
     function submitData() {
-      const user = document.getElementById("user").value.trim();
+      const user = localStorage.getItem("employeeName") || "Unknown";
       const quantity = document.getElementById("quantity").value.trim();
       const barcode = document.getElementById("barcode").value.trim();
 
