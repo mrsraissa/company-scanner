@@ -18,9 +18,7 @@
     video {
       width: 100%;
       max-width: 320px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
+        }
     input, button {
       font-size: 18px;
       padding: 12px;
@@ -32,15 +30,14 @@
     #scannerUI {
       display: none;
       background-color: white;
-          }
-    #productInfo {
-      font-size: 22px;
-      font-weight: bold;
-      margin-bottom: 15px;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     #result {
       margin-top: 20px;
       font-weight: bold;
+      font-size: 20px;
     }
   </style>
 </head>
@@ -51,8 +48,6 @@
   <button onclick="openScanner()" id="startScanBtn">▶️ Start Scanning</button>
 
   <div id="scannerUI">
-    <div id="productInfo"></div>
-
     <video id="preview"></video><br>
 
     <label>Scanned Barcode:</label><br>
@@ -88,19 +83,19 @@
             .then(data => {
               if (data.status === "found") {
                 lastProductName = data.product;
-                document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong>`;
-                document.getElementById("result").innerText = "";
+                document.getElementById("result").innerHTML = `✅ <span style="font-size:24px;">${lastProductName}</span>`;
               } else {
-                document.getElementById("productInfo").innerHTML = "❌ Product not found in inventory.";
+                lastProductName = "";
+                document.getElementById("result").innerText = "❌ Product not found in inventory.";
               }
             })
             .catch(() => {
-              document.getElementById("productInfo").innerHTML = "❌ Error checking inventory.";
+              document.getElementById("result").innerText = "❌ Error checking inventory.";
             });
         })
         .catch(err => {
           console.error(err);
-          document.getElementById("productInfo").innerText = "❌ Error starting camera.";
+          document.getElementById("result").innerText = "❌ Error starting camera.";
         });
     }
 
@@ -130,11 +125,10 @@
       })
       .then(() => {
         document.getElementById("result").innerHTML =
-          `✅ Submitted:<br>📦 Product: ${lastProductName || barcode}<br>👤 User: ${user}<br>📊 Quantity: ${quantity}`;
+          `✅ Submitted:<br>📦 Product: <b>${lastProductName || barcode}</b><br>👤 User: ${user}<br>📊 Quantity: ${quantity}`;
 
         document.getElementById("quantity").value = "";
         document.getElementById("barcode").value = "";
-        document.getElementById("productInfo").innerHTML = "";
 
         document.getElementById("scannerUI").style.display = "none";
         document.getElementById("startScanBtn").style.display = "inline-block";
