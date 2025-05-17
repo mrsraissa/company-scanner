@@ -1,26 +1,37 @@
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(to bottom, #5a9f68);
+/* General layout */
+html, body {
   margin: 0;
   padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to bottom, #5a9f68);
+  height: 100%;
   color: #fff;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  overflow: hidden; /* Prevent body from scrolling */
 }
 
+/* Container to allow internal scrolling only */
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Fixed Header */
 .header {
   background: linear-gradient(to top, #198450);
   border-bottom-left-radius: 40px;
   border-bottom-right-radius: 40px;
   padding: 10px 20px;
-  width: 100%;
   color: white;
   text-align: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  position: fixed;
+  top: 0;
+  width: 100%;
 }
 
+/* Header content */
 .header h2 {
   font-size: 18px;
   margin: 10px 0;
@@ -33,29 +44,36 @@ body {
   gap: 10px;
 }
 
+/* Scrollable Content */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 120px 20px 80px; /* Leave space for fixed header/footer */
+  max-width: 400px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Scan Button */
 #startScanBtn {
   font-size: 36px;
   background-color: rgba(255, 255, 255, 0.1);
   color: black;
   width: 200px;
   height: 200px;
-  border: black;
+  border: none;
   border-radius: 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+  margin: 20px auto;
+  display: block;
 }
 
+/* Form Container */
 .container {
-  max-width: 400px;
   width: 100%;
-  padding: 20px;
-  margin-top: 100px;
   text-align: center;
-  position: absolute;
-  top: -5%;
 }
 
 input {
@@ -68,11 +86,13 @@ input {
   box-sizing: border-box;
 }
 
+/* Scanner UI */
 #scannerUI {
   display: none;
   background-color: white;
   padding: 20px;
   color: #333;
+  border-radius: 12px;
 }
 
 #productInfo {
@@ -89,46 +109,22 @@ input {
   color: #004d00;
 }
 
+video {
+  width: 100%;
+  max-width: 320px;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  border: none;
+}
+
+/* Material icons */
 .material-icons {
   font-size: 28px;
   color: black;
   vertical-align: middle;
 }
 
-video {
-  width: 100%;
-  max-width: 320px;
-  border-radius: 16px;
-  border: none;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.bottom-bar {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  max-width: 400px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(8px);
-  padding: 10px 0;
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-}
-
-.bottom-bar button {
-  background: none;
-  box-shadow: none;
-  color: none;
-  border: none;
-}
-
-.bottom-bar .material-icons {
-  font-size: 28px;
-}
-
+/* Buttons */
 .action-button {
   font-size: 28px;
   padding: 18px;
@@ -158,4 +154,27 @@ video {
 .action-button.secondary:hover {
   background-color: #2f7d2f;
   color: white;
+}
+
+/* Fixed footer */
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  max-width: 400px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  z-index: 10;
+}
+
+.bottom-bar button {
+  background: none;
+  border: none;
+  box-shadow: none;
 }
