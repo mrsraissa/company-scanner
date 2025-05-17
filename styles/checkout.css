@@ -1,96 +1,121 @@
-let codeReader;
-let lastProductName = "";
-let previewElem;
-
-window.onload = () => {
-  previewElem = document.getElementById('preview');
-  loadComponent('header', 'components/header.html');
-  loadComponent('footer', 'components/footer.html');
-};
-
-function loadComponent(id, file) {
-  fetch(file)
-    .then(res => res.text())
-    .then(html => document.getElementById(id).innerHTML = html);
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f9f9f9;
 }
 
-function openScanner() {
-  document.getElementById('startScanBtn').style.display = 'none';
-  document.getElementById('scannerUI').style.display = 'block';
-  document.getElementById("productInfo").innerHTML = "Searching for chemical...";
-
-  codeReader = new ZXing.BrowserMultiFormatReader();
-  codeReader.decodeOnceFromVideoDevice(undefined, previewElem)
-    .then(result => {
-      codeReader.reset();
-      const barcode = result.text;
-      document.getElementById('barcode').value = barcode;
-
-      fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(barcode)}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.status === "found") {
-            lastProductName = data.product;
-            document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong>`;
-          } else {
-            document.getElementById("productInfo").innerHTML = "❌ Product not found";
-          }
-        })
-        .catch(() => {
-          document.getElementById("productInfo").innerHTML = "❌ Error checking inventory";
-        });
-    })
-    .catch(err => {
-      console.error(err);
-      document.getElementById("productInfo").innerHTML = "❌ Error starting camera";
-    });
+.header {
+  background-color: #2196F3;
+  color: white;
+  padding: 12px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-function submitData() {
-  const submitBtn = document.getElementById("submitBtn");
-  submitBtn.disabled = true;
-  submitBtn.innerText = "Submitting...";
-
-  const user = localStorage.getItem("employeeName") || "Unknown";
-  const quantity = document.getElementById("quantity").value.trim();
-  const barcode = document.getElementById("barcode").value.trim();
-
-  if (!user || !quantity || !barcode) {
-    document.getElementById("result").innerText = "Please fill out all fields.";
-    submitBtn.disabled = false;
-    submitBtn.innerText = "Submit";
-    return;
-  }
-
-  fetch("https://script.google.com/macros/s/AKfycbx_Bl4QAbqVSZndyQT97xMBKow-8AjLC3A6oHHbpGAziaIOCi1Mvqqnt9ofYA4vT9gUvA/exec", {
-    method: "POST",
-    mode: "no-cors",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body: `user=${encodeURIComponent(user)}&quantity=${encodeURIComponent(quantity)}&barcode=${encodeURIComponent(barcode)}`
-  })
-  .then(() => {
-    document.getElementById("result").innerHTML =
-      `✅ Submitted:<br><strong>${lastProductName || barcode}</strong><br>📦 Qty: ${quantity} | 👤 ${user}`;
-
-    document.getElementById("quantity").value = "";
-    document.getElementById("barcode").value = "";
-    document.getElementById("productInfo").innerHTML = "";
-
-    document.getElementById("scannerUI").style.display = "none";
-    document.getElementById("startScanBtn").style.display = "inline-block";
-  })
-  .catch((err) => {
-    console.error("Send error:", err);
-    document.getElementById("result").innerText = "❌ Error sending data.";
-  })
-  .finally(() => {
-    submitBtn.disabled = false;
-    submitBtn.innerText = "Submit";
-  });
+.header .material-icons {
+  margin-right: 8px;
+  vertical-align: middle;
 }
 
-function goBack() {
-  window.location.href = 'index.html';
+.icon-title {
+  display: flex;
+  align-items: center;
+}
+
+.icon-title h2 {
+  margin: 0;
+}
+
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #2196F3;
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.bottom-bar button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.container {
+  padding: 20px;
+}
+
+#scannerUI {
+  display: none;
+  margin-top: 20px;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  margin-top: 4px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.action-button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 12px 20px;
+  margin: 10px 5px 0 0;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.action-button.secondary {
+  background-color: #FF9800;
+}
+
+#startScanBtn {
+  display: block;
+  margin: 40px auto 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+#productInfo {
+  margin: 10px 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+#result {
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+video#preview {
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
 }
