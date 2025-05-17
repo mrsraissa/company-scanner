@@ -15,33 +15,27 @@
       height: 100vh;
       display: flex;
       flex-direction: column;
-    }
-    .container {
-      max-width: 400px;
-      margin: auto;
-      padding: 20px;
-      text-align: center;
-      flex-grow: 1;
+      align-items: center;
     }
     .header {
       background: linear-gradient(to right, #56ab2f, #a8e063);
       border-bottom-left-radius: 40px;
       border-bottom-right-radius: 40px;
-      padding: 20px;
+      padding: 10px 20px;
+      width: 100%;
       color: white;
       text-align: center;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
     .header h2 {
-      font-size: 20px;
-      margin: 0;
+      font-size: 18px;
+      margin: 10px 0;
     }
     .icon-title {
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 10px;
-      color: white;
     }
     #startScanBtn {
       font-size: 18px;
@@ -49,14 +43,19 @@
       color: white;
       border: 2px solid white;
       border-radius: 20px;
-      padding: 16px;
-      margin-top: 100px;
+      padding: 16px 30px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
       backdrop-filter: blur(10px);
       position: absolute;
       top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      transform: translateY(-50%);
+    }
+    .container {
+      max-width: 400px;
+      width: 100%;
+      padding: 20px;
+      margin-top: 100px;
+      text-align: center;
     }
     input {
       font-size: 18px;
@@ -69,7 +68,12 @@
     #scannerUI {
       display: none;
       background-color: white;
-      }
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-top: 40px;
+      color: #333;
+    }
     #productInfo {
       font-size: 20px;
       font-weight: bold;
@@ -91,7 +95,8 @@
       max-width: 320px;
       border-radius: 16px;
       border: none;
-        }
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
     .bottom-bar {
       position: fixed;
       bottom: 0;
@@ -121,24 +126,24 @@
     </div>
   </div>
 
-  <div class="container">
-    <button onclick="openScanner()" id="startScanBtn"><span class="material-icons">qr_code_scanner</span>Start Scanning</button>
+  <button onclick="openScanner()" id="startScanBtn"><span class="material-icons">qr_code_scanner</span> Start Scanning</button>
 
+  <div class="container">
     <div id="scannerUI">
       <div id="productInfo">&nbsp;</div>
       <video id="preview" playsinline></video>
 
-      <label><span class="material-icons">barcode</span>Scanned Barcode:</label>
+      <label><span class="material-icons">barcode</span> Scanned Barcode:</label>
       <input type="text" id="barcode" readonly>
 
-      <label><span class="material-icons">edit</span>Quantity:</label>
+      <label><span class="material-icons">edit</span> Quantity:</label>
       <input type="number" id="quantity">
 
-      <button id="submitBtn" onclick="submitData()"><span class="material-icons">send</span>Submit</button>
-      <button onclick="openScanner()"><span class="material-icons">autorenew</span>Scan Again</button>
-    </div>
+      <button id="submitBtn" onclick="submitData()"><span class="material-icons">send</span> Submit</button>
+      <button onclick="openScanner()"><span class="material-icons">autorenew</span> Scan Again</button>
 
-    <div id="result"></div>
+      <div id="result"></div>
+    </div>
   </div>
 
   <div class="bottom-bar">
