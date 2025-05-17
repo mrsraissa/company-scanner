@@ -1,42 +1,38 @@
-/* General layout */
-html, body {
+/* Reset & base */
+body, html {
   margin: 0;
   padding: 0;
+  height: 100%;
+  overflow: hidden; /* prevents scrolling */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(to bottom, #5a9f68);
-  height: 100%;
   color: #fff;
-  overflow: hidden; /* Prevent body from scrolling */
+  display: flex;
+  flex-direction: column;
 }
 
-/* Container to allow internal scrolling only */
+/* Full-page wrapper */
 .page-wrapper {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  overflow: hidden;
+  position: relative;
 }
 
-/* Fixed Header */
+/* Fixed header */
 .header {
   background: linear-gradient(to top, #198450);
-  border-bottom-left-radius: 40px;
-  border-bottom-right-radius: 40px;
   padding: 10px 20px;
-  color: white;
   text-align: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-  position: fixed;
-  top: 0;
-  width: 100%;
+  color: white;
+  border-bottom-left-radius: 40px;
+  border-bottom-right-radius: 40px;
+  z-index: 2;
 }
 
-/* Header content */
-.header h2 {
-  font-size: 18px;
-  margin: 10px 0;
-}
-
+/* Center title + icon */
 .icon-title {
   display: flex;
   justify-content: center;
@@ -44,18 +40,21 @@ html, body {
   gap: 10px;
 }
 
-/* Scrollable Content */
-.content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 120px 20px 80px; /* Leave space for fixed header/footer */
-  max-width: 400px;
-  margin: 0 auto;
-  width: 100%;
-  box-sizing: border-box;
+.header h2 {
+  font-size: 18px;
+  margin: 10px 0;
 }
 
-/* Scan Button */
+/* Content center */
+.content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+/* Centered scan button */
 #startScanBtn {
   font-size: 36px;
   background-color: rgba(255, 255, 255, 0.1);
@@ -66,16 +65,54 @@ html, body {
   border-radius: 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
-  margin: 20px auto;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Form Container */
+/* Container for scanner UI */
 .container {
-  width: 100%;
+  display: none;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
+  padding: 20px;
+  max-width: 400px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  color: #004d00;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
+/* Scanner specific */
+#scannerUI {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+#productInfo {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 15px 0 5px;
+}
+
+#result {
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+video {
+  width: 100%;
+  max-width: 320px;
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Inputs */
 input {
   font-size: 18px;
   padding: 12px;
@@ -84,44 +121,6 @@ input {
   border: 1px solid #ccc;
   width: 100%;
   box-sizing: border-box;
-}
-
-/* Scanner UI */
-#scannerUI {
-  display: none;
-  background-color: white;
-  padding: 20px;
-  color: #333;
-  border-radius: 12px;
-}
-
-#productInfo {
-  font-size: 20px;
-  font-weight: bold;
-  margin: 15px 0 5px;
-  color: #004d00;
-}
-
-#result {
-  font-size: 16px;
-  font-weight: bold;
-  margin-top: 20px;
-  color: #004d00;
-}
-
-video {
-  width: 100%;
-  max-width: 320px;
-  border-radius: 16px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  border: none;
-}
-
-/* Material icons */
-.material-icons {
-  font-size: 28px;
-  color: black;
-  vertical-align: middle;
 }
 
 /* Buttons */
@@ -156,7 +155,7 @@ video {
   color: white;
 }
 
-/* Fixed footer */
+/* Footer */
 .bottom-bar {
   position: fixed;
   bottom: 0;
@@ -170,11 +169,16 @@ video {
   display: flex;
   justify-content: center;
   gap: 30px;
-  z-index: 10;
+  z-index: 2;
 }
 
 .bottom-bar button {
   background: none;
   border: none;
-  box-shadow: none;
+  cursor: pointer;
+}
+
+.material-icons {
+  font-size: 28px;
+  color: black;
 }
