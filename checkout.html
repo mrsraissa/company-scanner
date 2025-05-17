@@ -18,7 +18,9 @@
     video {
       width: 100%;
       max-width: 320px;
-        }
+      margin-bottom: 10px;
+      border: none;
+    }
     input, button {
       font-size: 18px;
       padding: 12px;
@@ -34,10 +36,14 @@
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
+    #productInfo {
+      font-size: 22px;
+      font-weight: bold;
+      margin: 15px 0;
+    }
     #result {
       margin-top: 20px;
       font-weight: bold;
-      font-size: 20px;
     }
   </style>
 </head>
@@ -48,9 +54,9 @@
   <button onclick="openScanner()" id="startScanBtn">▶️ Start Scanning</button>
 
   <div id="scannerUI">
-    <video id="preview"></video><br>
-
     <label>Scanned Barcode:</label><br>
+    <div id="productInfo"></div>
+
     <input type="text" id="barcode" readonly><br>
 
     <label>Quantity:</label><br>
@@ -65,7 +71,10 @@
   <script>
     let codeReader;
     let lastProductName = "";
-    const previewElem = document.getElementById('preview');
+    const previewElem = document.createElement('video');
+    previewElem.setAttribute("id", "preview");
+    document.getElementById("scannerUI").prepend(previewElem);
+
     const barcodeInput = document.getElementById('barcode');
 
     function openScanner() {
@@ -83,19 +92,19 @@
             .then(data => {
               if (data.status === "found") {
                 lastProductName = data.product;
-                document.getElementById("result").innerHTML = `✅ <span style="font-size:24px;">${lastProductName}</span>`;
+                document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong>`;
+                document.getElementById("result").innerText = "";
               } else {
-                lastProductName = "";
-                document.getElementById("result").innerText = "❌ Product not found in inventory.";
+                document.getElementById("productInfo").innerHTML = "❌ Product not found in inventory.";
               }
             })
             .catch(() => {
-              document.getElementById("result").innerText = "❌ Error checking inventory.";
+              document.getElementById("productInfo").innerHTML = "❌ Error checking inventory.";
             });
         })
         .catch(err => {
           console.error(err);
-          document.getElementById("result").innerText = "❌ Error starting camera.";
+          document.getElementById("productInfo").innerText = "❌ Error starting camera.";
         });
     }
 
@@ -125,10 +134,11 @@
       })
       .then(() => {
         document.getElementById("result").innerHTML =
-          `✅ Submitted:<br>📦 Product: <b>${lastProductName || barcode}</b><br>👤 User: ${user}<br>📊 Quantity: ${quantity}`;
+          `✅ Submitted:<br>📦 Product: ${lastProductName || barcode}<br>👤 User: ${user}<br>📊 Quantity: ${quantity}`;
 
         document.getElementById("quantity").value = "";
         document.getElementById("barcode").value = "";
+        document.getElementById("productInfo").innerHTML = "";
 
         document.getElementById("scannerUI").style.display = "none";
         document.getElementById("startScanBtn").style.display = "inline-block";
