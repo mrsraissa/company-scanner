@@ -106,6 +106,7 @@ html, body {
   align-items: center;
   gap: 6px;
   margin-top: 10px;
+  font-size: 16px;
 }
 
 #scannerUI input {
