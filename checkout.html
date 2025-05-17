@@ -65,9 +65,9 @@
     };
 
     function openScanner() {
-      document.getElementById('startScanBtn').style.display = 'flex';
-      document.getElementById('scannerUI').style.display = 'none';
-      document.getElementById("productInfo").innerHTML = "Searching for chemical...";
+      document.getElementById('startScanBtn').style.display = 'none';
+      document.getElementById('scannerUI').style.display = 'flex';
+      document.getElementById("productInfo").innerHTML = "🔍 Searching for chemical...";
 
       codeReader = new ZXing.BrowserMultiFormatReader();
       codeReader.decodeOnceFromVideoDevice(undefined, previewElem)
@@ -106,7 +106,7 @@
       const barcode = document.getElementById("barcode").value.trim();
 
       if (!user || !quantity || !barcode) {
-        document.getElementById("result").innerText = "Please fill out all fields.";
+        document.getElementById("result").innerText = "⚠️ Please fill out all fields.";
         submitBtn.disabled = false;
         submitBtn.innerText = "Submit";
         return;
@@ -127,9 +127,6 @@
         document.getElementById("quantity").value = "";
         document.getElementById("barcode").value = "";
         document.getElementById("productInfo").innerHTML = "";
-
-        document.getElementById("scannerUI").style.display = "none";
-        document.getElementById("startScanBtn").style.display = "flex";
       })
       .catch((err) => {
         console.error("Send error:", err);
