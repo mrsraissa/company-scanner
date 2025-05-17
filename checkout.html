@@ -65,8 +65,8 @@
     };
 
     function openScanner() {
-      document.getElementById('startScanBtn').style.display = 'none';
-      document.getElementById('scannerUI').style.display = 'flex';
+      document.getElementById('startScanBtn').style.display = 'flex';
+      document.getElementById('scannerUI').style.display = 'none';
       document.getElementById("productInfo").innerHTML = "Searching for chemical...";
 
       codeReader = new ZXing.BrowserMultiFormatReader();
