@@ -78,38 +78,42 @@
     const barcodeInput = document.getElementById('barcode');
 
     function openScanner() {
-      document.getElementById('startScanBtn').style.display = 'none';
-      document.getElementById('scannerUI').style.display = 'block';
-      document.getElementById("productInfo").innerHTML = "🔎 Searching for chemical...";
+  document.getElementById('startScanBtn').style.display = 'none';
+  document.getElementById('scannerUI').style.display = 'block';
+  document.getElementById("productInfo").innerHTML = ""; // Clear message initially
 
-      codeReader = new ZXing.BrowserMultiFormatReader();
-      codeReader.decodeOnceFromVideoDevice(undefined, previewElem)
-        .then(result => {
-          codeReader.reset();
-          barcodeInput.value = result.text;
+  codeReader = new ZXing.BrowserMultiFormatReader();
+  codeReader.decodeOnceFromVideoDevice(undefined, previewElem)
+    .then(result => {
+      codeReader.reset();
+      barcodeInput.value = result.text;
 
-          document.getElementById("productInfo").innerHTML = "🔎 Searching for chemical...";
+      // Show message only if there's a barcode
+      if (result.text) {
+        document.getElementById("productInfo").innerHTML = "🔎 Searching for chemical...";
+      }
 
-          fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(result.text)}`)
-            .then(res => res.json())
-            .then(data => {
-              if (data.status === "found") {
-                lastProductName = data.product;
-                document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong>`;
-                document.getElementById("result").innerText = "";
-              } else {
-                document.getElementById("productInfo").innerHTML = "❌ Product not found in inventory.";
-              }
-            })
-            .catch(() => {
-              document.getElementById("productInfo").innerHTML = "❌ Error checking inventory.";
-            });
+      fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(result.text)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "found") {
+            lastProductName = data.product;
+            document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong>`;
+            document.getElementById("result").innerText = "";
+          } else {
+            document.getElementById("productInfo").innerHTML = "❌ Product not found in inventory.";
+          }
         })
-        .catch(err => {
-          console.error(err);
-          document.getElementById("productInfo").innerText = "❌ Error starting camera.";
+        .catch(() => {
+          document.getElementById("productInfo").innerHTML = "❌ Error checking inventory.";
         });
-    }
+    })
+    .catch(err => {
+      console.error(err);
+      document.getElementById("productInfo").innerText = "❌ Error starting camera.";
+    });
+}
+
 
     function submitData() {
       const submitBtn = document.getElementById("submitBtn");
