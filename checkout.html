@@ -63,12 +63,13 @@
     input {
       font-size: 18px;
       padding: 12px;
-      width: 100%;
       margin: 10px 0;
       border-radius: 8px;
       border: 1px solid #ccc;
-      position: absolute;
-    }
+      width: 100%;
+      box-sizing: border-box; /* ✅ ensures padding/border included in width */
+}
+        }
     #scannerUI {
       display: none;
       background-color: white;
