@@ -18,7 +18,9 @@
     video {
       width: 100%;
       max-width: 320px;
-               }
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
     input, button {
       font-size: 18px;
       padding: 12px;
@@ -30,9 +32,11 @@
     #scannerUI {
       display: none;
       background-color: white;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+          }
+    #productInfo {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 15px;
     }
     #result {
       margin-top: 20px;
@@ -47,6 +51,8 @@
   <button onclick="openScanner()" id="startScanBtn">▶️ Start Scanning</button>
 
   <div id="scannerUI">
+    <div id="productInfo"></div>
+
     <video id="preview"></video><br>
 
     <label>Scanned Barcode:</label><br>
@@ -77,7 +83,7 @@
           codeReader.reset();
           barcodeInput.value = result.text;
 
-        fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(result.text)}`)
+          fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(result.text)}`)
             .then(res => res.json())
             .then(data => {
               if (data.status === "found") {
@@ -97,6 +103,7 @@
           document.getElementById("productInfo").innerText = "❌ Error starting camera.";
         });
     }
+
     function submitData() {
       const submitBtn = document.getElementById("submitBtn");
       submitBtn.disabled = true;
@@ -127,6 +134,7 @@
 
         document.getElementById("quantity").value = "";
         document.getElementById("barcode").value = "";
+        document.getElementById("productInfo").innerHTML = "";
 
         document.getElementById("scannerUI").style.display = "none";
         document.getElementById("startScanBtn").style.display = "inline-block";
