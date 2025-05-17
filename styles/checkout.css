@@ -1,16 +1,18 @@
+/* Reset and base layout */
 html, body {
   margin: 0;
   padding: 0;
   min-height: 100%;
   font-family: Arial, sans-serif;
   background-color: #4CAF50; /* Main green background */
-  overflow-y: auto; /* Allow vertical scrolling */
+  overflow-y: auto; /* Allow vertical scroll */
 }
-/* Layout container */
+
+/* Full height container */
 .page-wrapper {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 /* Fixed header */
@@ -48,11 +50,15 @@ html, body {
 /* Main content area */
 .content {
   flex: 1;
-  position: relative;
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 80px;  /* space for header */
+  padding-bottom: 80px; /* space for footer */
+  box-sizing: border-box;
 }
 
-/* Centered scan button */
+/* Scan button */
 #startScanBtn {
   background-color: #66BB6A;
   border: none;
@@ -64,16 +70,11 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: center;
-
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1;
+  margin-top: 20px;
 }
 
 #startScanBtn:hover {
-  transform: translate(-50%, -50%) scale(1.05);
+  transform: scale(1.05);
 }
 
 #startScanBtn .material-icons {
@@ -81,7 +82,7 @@ html, body {
   color: black;
 }
 
-/* Scanner UI (centered, hidden initially) */
+/* Scanner UI (hidden initially) */
 #scannerUI {
   display: none;
   flex-direction: column;
@@ -94,12 +95,8 @@ html, body {
   max-width: 400px;
   align-items: center;
   justify-content: center;
-
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 2;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 /* Scanner form elements */
