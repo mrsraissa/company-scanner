@@ -77,26 +77,26 @@
           codeReader.reset();
           barcodeInput.value = result.text;
 
-          fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(result.text)}`)
+        fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(result.text)}`)
             .then(res => res.json())
             .then(data => {
               if (data.status === "found") {
                 lastProductName = data.product;
-                document.getElementById("result").innerHTML = `✅ <strong>${lastProductName}</strong> found!`;
+                document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong>`;
+                document.getElementById("result").innerText = "";
               } else {
-                document.getElementById("result").innerText = "❌ Product not found in inventory.";
+                document.getElementById("productInfo").innerHTML = "❌ Product not found in inventory.";
               }
             })
             .catch(() => {
-              document.getElementById("result").innerText = "❌ Error checking inventory.";
+              document.getElementById("productInfo").innerHTML = "❌ Error checking inventory.";
             });
         })
         .catch(err => {
           console.error(err);
-          document.getElementById("result").innerText = "❌ Error starting camera.";
+          document.getElementById("productInfo").innerText = "❌ Error starting camera.";
         });
     }
-
     function submitData() {
       const submitBtn = document.getElementById("submitBtn");
       submitBtn.disabled = true;
