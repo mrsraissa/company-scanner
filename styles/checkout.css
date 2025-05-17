@@ -1,184 +1,73 @@
-/* Reset & base */
-body, html {
+/* Make body green and prevent scroll */
+html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow: hidden; /* prevents scrolling */
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(to bottom, #5a9f68);
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Full-page wrapper */
-.page-wrapper {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
   overflow: hidden;
-  position: relative;
+  background-color: #4CAF50; /* Your green */
+  font-family: Arial, sans-serif;
 }
 
 /* Fixed header */
 .header {
-  background: linear-gradient(to top, #198450);
-  padding: 10px 20px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: #2E7D32;
   color: white;
-  border-bottom-left-radius: 40px;
-  border-bottom-right-radius: 40px;
-  z-index: 2;
+  padding: 10px 20px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
-/* Center title + icon */
-.icon-title {
+/* Fixed footer */
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #2E7D32;
+  padding: 10px;
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: 10px;
+  z-index: 1000;
 }
 
-.header h2 {
-  font-size: 18px;
-  margin: 10px 0;
+/* Page wrapper between header/footer */
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding-top: 60px;  /* Space for header */
+  padding-bottom: 60px; /* Space for footer */
 }
 
-/* Content center */
+/* Center Scan button vertically */
 .content {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
 }
 
-/* Centered scan button */
+/* Scan button style */
 #startScanBtn {
-  font-size: 36px;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: black;
-  width: 200px;
-  height: 200px;
+  background-color: #66BB6A;
   border: none;
-  border-radius: 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Container for scanner UI */
-.container {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 20px;
-  max-width: 400px;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
-  color: #004d00;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-/* Scanner specific */
-#scannerUI {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-#productInfo {
-  font-size: 20px;
-  font-weight: bold;
-  margin: 15px 0 5px;
-}
-
-#result {
-  font-size: 16px;
-  font-weight: bold;
-  margin-top: 20px;
-}
-
-video {
-  width: 100%;
-  max-width: 320px;
-  border-radius: 16px;
-  border: none;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-/* Inputs */
-input {
-  font-size: 18px;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Buttons */
-.action-button {
-  font-size: 28px;
-  padding: 18px;
-  width: 100%;
-  max-width: 320px;
-  margin: 12px auto;
-  display: block;
   border-radius: 12px;
-  background-color: #2f7d2f;
-  color: white;
-  border: none;
+  padding: 50px;
   cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  text-align: center;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease;
 }
 
-.action-button:hover {
-  background-color: #256d25;
+#startScanBtn:hover {
+  transform: scale(1.05);
 }
 
-.action-button.secondary {
-  background-color: transparent;
-  border: 2px solid #2f7d2f;
-  color: #2f7d2f;
-}
-
-.action-button.secondary:hover {
-  background-color: #2f7d2f;
-  color: white;
-}
-
-/* Footer */
-.bottom-bar {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  max-width: 400px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(8px);
-  padding: 10px 0;
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  z-index: 2;
-}
-
-.bottom-bar button {
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
+/* Icon size */
 .material-icons {
-  font-size: 28px;
+  font-size: 48px;
   color: black;
 }
