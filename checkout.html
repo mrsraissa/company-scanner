@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Check Out/Registro de Salida</title>
+  <title>Inventory Check & Log</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://unpkg.com/@zxing/library@latest"></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -25,7 +25,7 @@
       max-width: 320px;
       margin-bottom: 10px;
       border: none;
-          }
+         }
     input, button {
       font-size: 18px;
       padding: 12px;
@@ -70,12 +70,13 @@
   </style>
 </head>
 <body>
-  <h2><span class="material-icons">inventory_2</span>Check Out/Registro de Salida</h2>
+  <h2><span class="material-icons">inventory_2</span>Inventory Check & Log</h2>
   <button onclick="goBack()"><span class="material-icons">arrow_back</span>Back to Menu</button><br><br>
 
   <button onclick="openScanner()" id="startScanBtn"><span class="material-icons">qr_code_scanner</span>Start Scanning</button>
 
   <div id="scannerUI">
+    <video id="preview" playsinline></video>
     <label><span class="material-icons">barcode</span>Scanned Barcode:</label><br>
     <div id="productInfo">Searching for chemical...</div>
 
@@ -93,10 +94,7 @@
   <script>
     let codeReader;
     let lastProductName = "";
-    const previewElem = document.createElement('video');
-    previewElem.setAttribute("id", "preview");
-    document.getElementById("scannerUI").prepend(previewElem);
-
+    const previewElem = document.getElementById('preview');
     const barcodeInput = document.getElementById('barcode');
 
     function openScanner() {
@@ -186,4 +184,3 @@
   </script>
 </body>
 </html>
-
