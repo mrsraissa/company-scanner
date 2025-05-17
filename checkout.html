@@ -22,7 +22,7 @@
       box-shadow: 0 0 10px rgba(0,0,0,0.2);
       margin-bottom: 10px;
     }
-    input, button, textarea {
+    input, button {
       font-size: 18px;
       padding: 12px;
       width: 90%;
@@ -40,6 +40,7 @@
     #result {
       margin-top: 20px;
       font-weight: bold;
+      font-size: 20px;
     }
   </style>
 </head>
@@ -51,8 +52,6 @@
 
   <div id="scannerUI">
     <video id="preview"></video><br>
-
-    <textarea id="productBox" readonly style="height:80px;"></textarea><br>
 
     <label>Scanned Barcode:</label><br>
     <input type="text" id="barcode" readonly><br>
@@ -87,10 +86,9 @@
             .then(data => {
               if (data.status === "found") {
                 lastProductName = data.product;
-                document.getElementById("productBox").value = lastProductName;
-                document.getElementById("result").innerText = `✅ ${lastProductName} found!`;
+                document.getElementById("result").innerHTML = `✅ <span style="font-size:24px;">${lastProductName}</span>`;
               } else {
-                document.getElementById("productBox").value = "";
+                lastProductName = "";
                 document.getElementById("result").innerText = "❌ Product not found in inventory.";
               }
             })
@@ -130,11 +128,10 @@
       })
       .then(() => {
         document.getElementById("result").innerHTML =
-          `✅ Submitted:<br>📦 Product: ${lastProductName || barcode}<br>👤 User: ${user}<br>📊 Quantity: ${quantity}`;
+          `✅ Submitted:<br>📦 Product: <b>${lastProductName || barcode}</b><br>👤 User: ${user}<br>📊 Quantity: ${quantity}`;
 
         document.getElementById("quantity").value = "";
         document.getElementById("barcode").value = "";
-        document.getElementById("productBox").value = "";
 
         document.getElementById("scannerUI").style.display = "none";
         document.getElementById("startScanBtn").style.display = "inline-block";
