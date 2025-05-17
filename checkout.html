@@ -1,45 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>🖖️ Inventory Check & Log</title>
+  <title>Inventory Check & Log</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://unpkg.com/@zxing/library@latest"></script>
   <style>
     body {
-      font-family: Arial;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       text-align: center;
       padding: 20px;
       font-size: 18px;
-      background-color: #f9f9f9;
+      background-color: #e3fce3; /* soft green */
+      color: #2f4f2f;
     }
     h2 {
       margin-bottom: 10px;
+      font-size: 26px;
+      font-weight: bold;
+      color: #1d3c1d;
     }
     video {
       width: 100%;
       max-width: 320px;
       margin-bottom: 10px;
       border: none;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     }
     input, button {
       font-size: 18px;
       padding: 12px;
       width: 90%;
       margin: 10px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
+      border-radius: 8px;
+      border: 1px solid #aaa;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+    }
+    button {
+      background-color: #2f7d2f;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #256d25;
     }
     #scannerUI {
       display: none;
       background-color: white;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
+      padding: 20px;
+         }
     #productInfo {
       font-size: 22px;
       font-weight: bold;
       margin: 15px 0;
+      color: #004d00;
     }
     #result {
       margin-top: 20px;
@@ -48,22 +62,22 @@
   </style>
 </head>
 <body>
-  <h2>🖖️ <b>Inventory Check & Log</b></h2>
-  <button onclick="goBack()">🔙 Back to Menu</button><br><br>
+  <h2>Inventory Check & Log</h2>
+  <button onclick="goBack()">Back to Menu</button><br><br>
 
-  <button onclick="openScanner()" id="startScanBtn">▶️ Start Scanning</button>
+  <button onclick="openScanner()" id="startScanBtn">Start Scanning</button>
 
   <div id="scannerUI">
     <label>Scanned Barcode:</label><br>
-    <div id="productInfo"> 🔎 Searching for chemical...</div>
+    <div id="productInfo">Searching for chemical...</div>
 
     <input type="text" id="barcode" readonly><br>
 
     <label>Quantity:</label><br>
     <input type="number" id="quantity"><br>
 
-    <button id="submitBtn" onclick="submitData()">✅ Submit</button><br>
-    <button onclick="openScanner()">🔁 Scan Again</button>
+    <button id="submitBtn" onclick="submitData()">Submit</button><br>
+    <button onclick="openScanner()">Scan Again</button>
   </div>
 
   <div id="result"></div>
@@ -78,56 +92,54 @@
     const barcodeInput = document.getElementById('barcode');
 
     function openScanner() {
-  document.getElementById('startScanBtn').style.display = 'none';
-  document.getElementById('scannerUI').style.display = 'block';
-  document.getElementById("productInfo").innerHTML = ""; // Clear message initially
+      document.getElementById('startScanBtn').style.display = 'none';
+      document.getElementById('scannerUI').style.display = 'block';
+      document.getElementById("productInfo").innerHTML = "";
 
-  codeReader = new ZXing.BrowserMultiFormatReader();
-  codeReader.decodeOnceFromVideoDevice(undefined, previewElem)
-    .then(result => {
-      codeReader.reset();
-      barcodeInput.value = result.text;
+      codeReader = new ZXing.BrowserMultiFormatReader();
+      codeReader.decodeOnceFromVideoDevice(undefined, previewElem)
+        .then(result => {
+          codeReader.reset();
+          barcodeInput.value = result.text;
 
-      // Show message only if there's a barcode
-      if (result.text) {
-        document.getElementById("productInfo").innerHTML = "🔎 Searching for chemical...";
-      }
-
-      fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(result.text)}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.status === "found") {
-            lastProductName = data.product;
-            document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong>`;
-            document.getElementById("result").innerText = "";
-          } else {
-            document.getElementById("productInfo").innerHTML = "❌ Product not found in inventory.";
+          if (result.text) {
+            document.getElementById("productInfo").innerHTML = "Searching for chemical...";
           }
-        })
-        .catch(() => {
-          document.getElementById("productInfo").innerHTML = "❌ Error checking inventory.";
-        });
-    })
-    .catch(err => {
-      console.error(err);
-      document.getElementById("productInfo").innerText = "❌ Error starting camera.";
-    });
-}
 
+          fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(result.text)}`)
+            .then(res => res.json())
+            .then(data => {
+              if (data.status === "found") {
+                lastProductName = data.product;
+                document.getElementById("productInfo").innerHTML = `Product: <strong>${lastProductName}</strong>`;
+                document.getElementById("result").innerText = "";
+              } else {
+                document.getElementById("productInfo").innerHTML = "Product not found in inventory.";
+              }
+            })
+            .catch(() => {
+              document.getElementById("productInfo").innerHTML = "Error checking inventory.";
+            });
+        })
+        .catch(err => {
+          console.error(err);
+          document.getElementById("productInfo").innerText = "Error starting camera.";
+        });
+    }
 
     function submitData() {
       const submitBtn = document.getElementById("submitBtn");
       submitBtn.disabled = true;
-      submitBtn.innerText = "⏳ Submitting...";
+      submitBtn.innerText = "Submitting...";
 
       const user = localStorage.getItem("employeeName") || "Unknown";
       const quantity = document.getElementById("quantity").value.trim();
       const barcode = document.getElementById("barcode").value.trim();
 
       if (!user || !quantity || !barcode) {
-        document.getElementById("result").innerText = "⚠️ Please fill out all fields.";
+        document.getElementById("result").innerText = "Please fill out all fields.";
         submitBtn.disabled = false;
-        submitBtn.innerText = "✅ Submit";
+        submitBtn.innerText = "Submit";
         return;
       }
 
@@ -141,7 +153,7 @@
       })
       .then(() => {
         document.getElementById("result").innerHTML =
-          `✅ Submitted:<br>📦 Product: ${lastProductName || barcode}<br>👤 User: ${user}<br>📋 Quantity: ${quantity}`;
+          `Submitted:<br>Product: ${lastProductName || barcode}<br>User: ${user}<br>Quantity: ${quantity}`;
 
         document.getElementById("quantity").value = "";
         document.getElementById("barcode").value = "";
@@ -152,11 +164,11 @@
       })
       .catch((err) => {
         console.error("Send error:", err);
-        document.getElementById("result").innerText = "❌ Error sending data.";
+        document.getElementById("result").innerText = "Error sending data.";
       })
       .finally(() => {
         submitBtn.disabled = false;
-        submitBtn.innerText = "✅ Submit";
+        submitBtn.innerText = "Submit";
       });
     }
 
