@@ -40,7 +40,6 @@
     #result {
       margin-top: 20px;
       font-weight: bold;
-      font-size: 20px;
     }
   </style>
 </head>
@@ -86,9 +85,8 @@
             .then(data => {
               if (data.status === "found") {
                 lastProductName = data.product;
-                document.getElementById("result").innerHTML = `✅ <span style="font-size:24px;">${lastProductName}</span>`;
+                document.getElementById("result").innerHTML = `✅ <strong>${lastProductName}</strong> found!`;
               } else {
-                lastProductName = "";
                 document.getElementById("result").innerText = "❌ Product not found in inventory.";
               }
             })
@@ -128,7 +126,7 @@
       })
       .then(() => {
         document.getElementById("result").innerHTML =
-          `✅ Submitted:<br>📦 Product: <b>${lastProductName || barcode}</b><br>👤 User: ${user}<br>📊 Quantity: ${quantity}`;
+          `✅ Submitted:<br>📦 Product: ${lastProductName || barcode}<br>👤 User: ${user}<br>📊 Quantity: ${quantity}`;
 
         document.getElementById("quantity").value = "";
         document.getElementById("barcode").value = "";
