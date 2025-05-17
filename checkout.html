@@ -25,7 +25,9 @@
       max-width: 320px;
       margin-bottom: 10px;
       border: none;
-         }
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
     input, button {
       font-size: 18px;
       padding: 12px;
@@ -94,7 +96,11 @@
   <script>
     let codeReader;
     let lastProductName = "";
-    const previewElem = document.getElementById('preview');
+    let previewElem;
+    window.onload = () => {
+      previewElem = document.getElementById('preview');
+    };
+
     const barcodeInput = document.getElementById('barcode');
 
     function openScanner() {
