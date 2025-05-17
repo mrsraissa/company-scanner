@@ -122,17 +122,19 @@
   font-size: 28px; /* 🔍 Adjust size as needed */
 }
     .action-button {
-  font-size: 18px;           /* 🔠 text size */
-  padding: 14px 24px;        /* 📦 padding */
-  width: 100%;               /* 🔲 full width or change to fixed width */
-  max-width: 300px;
-  margin: 10px auto;
-  border-radius: 8px;
-  background-color: #2f7d2f; /* ✅ green background */
-  color: white;              /* 🔤 text color */
+  font-size: 28px;
+  padding: 18px;
+  width: 100%;
+  max-width: 320px;
+  margin: 12px auto;
+  display: block;
+  border-radius: 12px;
+  background-color: #2f7d2f;
+  color: white;
   border: none;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  text-align: center;
 }
 
 .action-button:hover {
@@ -148,6 +150,11 @@
 .action-button.secondary:hover {
   background-color: #2f7d2f;
   color: white;
+}
+
+.material-icons {
+  font-size: 28px;
+  vertical-align: middle;
 }
 
   </style>
@@ -173,8 +180,13 @@
       <label><span class="material-icons">edit</span> Quantity:</label>
       <input type="number" id="quantity">
 
-      <button id="submitBtn" onclick="submitData()"><span class="material-icons">send</span> Submit</button>
-      <button onclick="openScanner()"><span class="material-icons">autorenew</span> Scan Again</button>
+   <button id="submitBtn" onclick="submitData()" class="action-button">
+  <span class="material-icons">send</span>
+</button>
+
+<button onclick="openScanner()" class="action-button secondary">
+  <span class="material-icons">autorenew</span>
+</button>
 
       <div id="result"></div>
     </div>
