@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>🗖️ Inventory Check & Log</title>
+  <title>🖖️ Inventory Check & Log</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://unpkg.com/@zxing/library@latest"></script>
   <style>
@@ -48,14 +48,14 @@
   </style>
 </head>
 <body>
-  <h2>🗖️ <b>Inventory Check & Log</b></h2>
+  <h2>🖖️ <b>Inventory Check & Log</b></h2>
   <button onclick="goBack()">🔙 Back to Menu</button><br><br>
 
   <button onclick="openScanner()" id="startScanBtn">▶️ Start Scanning</button>
 
   <div id="scannerUI">
     <label>Scanned Barcode:</label><br>
-    <div id="productInfo"></div>
+    <div id="productInfo"> 🔎 Searching for chemical...</div>
 
     <input type="text" id="barcode" readonly><br>
 
@@ -80,12 +80,15 @@
     function openScanner() {
       document.getElementById('startScanBtn').style.display = 'none';
       document.getElementById('scannerUI').style.display = 'block';
+      document.getElementById("productInfo").innerHTML = "🔎 Searching for chemical...";
 
       codeReader = new ZXing.BrowserMultiFormatReader();
       codeReader.decodeOnceFromVideoDevice(undefined, previewElem)
         .then(result => {
           codeReader.reset();
           barcodeInput.value = result.text;
+
+          document.getElementById("productInfo").innerHTML = "🔎 Searching for chemical...";
 
           fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(result.text)}`)
             .then(res => res.json())
@@ -134,7 +137,7 @@
       })
       .then(() => {
         document.getElementById("result").innerHTML =
-          `✅ Submitted:<br>📦 Product: ${lastProductName || barcode}<br>👤 User: ${user}<br>📊 Quantity: ${quantity}`;
+          `✅ Submitted:<br>📦 Product: ${lastProductName || barcode}<br>👤 User: ${user}<br>📋 Quantity: ${quantity}`;
 
         document.getElementById("quantity").value = "";
         document.getElementById("barcode").value = "";
