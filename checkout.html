@@ -12,24 +12,28 @@
       margin: 0;
       padding: 0;
       color: #fff;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
     .container {
       max-width: 400px;
       margin: auto;
       padding: 20px;
       text-align: center;
+      flex-grow: 1;
     }
     .header {
-      background: linear-gradient(to bottom right, #34e89e, #0f3443);
-      border-bottom-left-radius: 50px;
-      border-bottom-right-radius: 50px;
-      padding: 40px 20px 60px;
+      background: linear-gradient(to right, #56ab2f, #a8e063);
+      border-bottom-left-radius: 40px;
+      border-bottom-right-radius: 40px;
+      padding: 20px;
       color: white;
       text-align: center;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
     .header h2 {
-      font-size: 24px;
+      font-size: 20px;
       margin: 0;
     }
     .icon-title {
@@ -39,24 +43,20 @@
       gap: 10px;
       color: white;
     }
-    button {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
+    #startScanBtn {
       font-size: 18px;
-      background-color: #2f7d2f;
+      background-color: rgba(255, 255, 255, 0.1);
       color: white;
-      border: none;
-      border-radius: 12px;
-      padding: 14px;
-      width: 100%;
-      margin: 10px 0;
-      cursor: pointer;
-      box-shadow: 2px 4px 10px rgba(0,0,0,0.2);
-    }
-    button:hover {
-      background-color: #256d25;
+      border: 2px solid white;
+      border-radius: 20px;
+      padding: 16px;
+      margin-top: 100px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
     input {
       font-size: 18px;
@@ -69,12 +69,7 @@
     #scannerUI {
       display: none;
       background-color: white;
-      padding: 20px;
-      border-radius: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      margin-top: 20px;
-      color: #333;
-    }
+      }
     #productInfo {
       font-size: 20px;
       font-weight: bold;
@@ -96,8 +91,7 @@
       max-width: 320px;
       border-radius: 16px;
       border: none;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
+        }
     .bottom-bar {
       position: fixed;
       bottom: 0;
