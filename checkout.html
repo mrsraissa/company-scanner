@@ -8,90 +8,114 @@
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      text-align: center;
-      padding: 20px;
-      font-size: 18px;
-      background-color: #e3fce3;
+      background: linear-gradient(to bottom right, #d4f5e6, #e8fbe5);
+      margin: 0;
+      padding: 0;
       color: #2f4f2f;
     }
+    .container {
+      max-width: 400px;
+      margin: auto;
+      padding: 20px;
+      text-align: center;
+    }
     h2 {
-      margin-bottom: 10px;
       font-size: 26px;
       font-weight: bold;
-      color: #1d3c1d;
-    }
-    video {
-      width: 100%;
-      max-width: 320px;
       margin-bottom: 10px;
-      border: none;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     }
-    input, button {
-      font-size: 18px;
-      padding: 12px;
-      width: 90%;
-      margin: 10px 0;
-      border-radius: 8px;
-      border: 1px solid #aaa;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+    .icon-title {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
     }
     button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
       background-color: #2f7d2f;
       color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px;
+      width: 100%;
+      margin: 10px 0;
       cursor: pointer;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
     }
     button:hover {
       background-color: #256d25;
+    }
+    input {
+      font-size: 18px;
+      padding: 12px;
+      width: 100%;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #aaa;
     }
     #scannerUI {
       display: none;
       background-color: white;
       padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       margin-top: 20px;
     }
     #productInfo {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: bold;
-      margin: 15px 0;
+      margin: 15px 0 5px;
       color: #004d00;
     }
     #result {
-      margin-top: 20px;
+      font-size: 16px;
       font-weight: bold;
+      margin-top: 20px;
+      color: #004d00;
     }
     .material-icons {
-      vertical-align: middle;
       font-size: 20px;
       color: black;
-      margin-right: 6px;
+    }
+    video {
+      width: 100%;
+      max-width: 320px;
+      border-radius: 16px;
+      border: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
   </style>
 </head>
 <body>
-  <h2><span class="material-icons">inventory_2</span>Inventory Check & Log</h2>
-  <button onclick="goBack()"><span class="material-icons">arrow_back</span>Back to Menu</button><br><br>
+  <div class="container">
+    <div class="icon-title">
+      <span class="material-icons">inventory_2</span>
+      <h2>Inventory Check & Log</h2>
+    </div>
 
-  <button onclick="openScanner()" id="startScanBtn"><span class="material-icons">qr_code_scanner</span>Start Scanning</button>
+    <button onclick="goBack()"><span class="material-icons">arrow_back</span>Back to Menu</button>
+    <button onclick="openScanner()" id="startScanBtn"><span class="material-icons">qr_code_scanner</span>Start Scanning</button>
 
-  <div id="scannerUI">
-    <video id="preview" playsinline></video>
-    <label><span class="material-icons">barcode</span>Scanned Barcode:</label><br>
-    <div id="productInfo">Searching for chemical...</div>
+    <div id="scannerUI">
+      <div id="productInfo">&nbsp;</div>
+      <video id="preview" playsinline></video>
 
-    <input type="text" id="barcode" readonly><br>
+      <label><span class="material-icons">barcode</span>Scanned Barcode:</label>
+      <input type="text" id="barcode" readonly>
 
-    <label><span class="material-icons">edit</span>Quantity:</label><br>
-    <input type="number" id="quantity"><br>
+      <label><span class="material-icons">edit</span>Quantity:</label>
+      <input type="number" id="quantity">
 
-    <button id="submitBtn" onclick="submitData()"><span class="material-icons">send</span>Submit</button><br>
-    <button onclick="openScanner()"><span class="material-icons">autorenew</span>Scan Again</button>
+      <button id="submitBtn" onclick="submitData()"><span class="material-icons">send</span>Submit</button>
+      <button onclick="openScanner()"><span class="material-icons">autorenew</span>Scan Again</button>
+    </div>
+
+    <div id="result"></div>
   </div>
-
-  <div id="result"></div>
 
   <script>
     let codeReader;
@@ -101,41 +125,35 @@
       previewElem = document.getElementById('preview');
     };
 
-    const barcodeInput = document.getElementById('barcode');
-
     function openScanner() {
       document.getElementById('startScanBtn').style.display = 'none';
       document.getElementById('scannerUI').style.display = 'block';
-      document.getElementById("productInfo").innerHTML = "";
+      document.getElementById("productInfo").innerHTML = "Searching for chemical...";
 
       codeReader = new ZXing.BrowserMultiFormatReader();
       codeReader.decodeOnceFromVideoDevice(undefined, previewElem)
         .then(result => {
           codeReader.reset();
-          barcodeInput.value = result.text;
+          const barcode = result.text;
+          document.getElementById('barcode').value = barcode;
 
-          if (result.text) {
-            document.getElementById("productInfo").innerHTML = "Searching for chemical...";
-          }
-
-          fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(result.text)}`)
+          fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(barcode)}`)
             .then(res => res.json())
             .then(data => {
               if (data.status === "found") {
                 lastProductName = data.product;
-                document.getElementById("productInfo").innerHTML = `Product: <strong>${lastProductName}</strong>`;
-                document.getElementById("result").innerText = "";
+                document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong>`;
               } else {
-                document.getElementById("productInfo").innerHTML = "Product not found in inventory.";
+                document.getElementById("productInfo").innerHTML = "❌ Product not found";
               }
             })
             .catch(() => {
-              document.getElementById("productInfo").innerHTML = "Error checking inventory.";
+              document.getElementById("productInfo").innerHTML = "❌ Error checking inventory";
             });
         })
         .catch(err => {
           console.error(err);
-          document.getElementById("productInfo").innerText = "Error starting camera.";
+          document.getElementById("productInfo").innerHTML = "❌ Error starting camera";
         });
     }
 
@@ -165,7 +183,7 @@
       })
       .then(() => {
         document.getElementById("result").innerHTML =
-          `Submitted:<br>Product: ${🛒lastProductName || barcode}<br>User: ${👤user}<br>Quantity: ${🧮quantity}`;
+          `✅ Submitted:<br><strong>${lastProductName || barcode}</strong><br>📦 Qty: ${quantity} | 👤 ${user}`;
 
         document.getElementById("quantity").value = "";
         document.getElementById("barcode").value = "";
@@ -176,7 +194,7 @@
       })
       .catch((err) => {
         console.error("Send error:", err);
-        document.getElementById("result").innerText = "Error sending data.";
+        document.getElementById("result").innerText = "❌ Error sending data.";
       })
       .finally(() => {
         submitBtn.disabled = false;
