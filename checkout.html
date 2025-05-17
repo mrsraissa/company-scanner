@@ -1,43 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Check Out / Registro de salida</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="styles/checkout.css">
-  <script src="https://unpkg.com/@zxing/library@latest"></script>
-  <script src="scripts/checkout.js" defer></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout</title>
+  <link rel="stylesheet" href="styles/checkout.css" />
 </head>
 <body>
+  <!-- Header -->
   <div id="header"></div>
 
-  <button onclick="openScanner()" id="startScanBtn">
-    <span class="material-icons" style="font-size: 64px;">qr_code_scanner</span>Scan
-  </button>
+  <!-- Checkout Container -->
+  <div class="checkout-container">
+    <h2>Checkout</h2>
 
-  <div class="container">
-    <div id="scannerUI">
-      <div id="productInfo">&nbsp;</div>
-      <video id="preview" playsinline></video>
+    <form id="checkout-form">
+      <div class="form-group">
+        <label for="full-name">Full Name</label>
+        <input type="text" id="full-name" name="full-name" required />
+      </div>
 
-      <label><span class="material-icons">barcode</span> Scanned Barcode:</label>
-      <input type="text" id="barcode" readonly>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" required />
+      </div>
 
-      <label><span class="material-icons">edit</span> Quantity:</label>
-      <input type="number" id="quantity">
+      <div class="form-group">
+        <label for="barcode">Scanned Barcode</label>
+        <input type="text" id="barcode" name="barcode" readonly />
+      </div>
 
-      <button id="submitBtn" onclick="submitData()" class="action-button">
-        <span class="material-icons">send</span>
-      </button>
+      <button type="submit" class="checkout-btn">Confirm Checkout</button>
+    </form>
 
-      <button onclick="openScanner()" class="action-button secondary">
-        <span class="material-icons">autorenew</span>
-      </button>
-
-      <div id="result"></div>
+    <div id="success-message" class="success-message" style="display: none;">
+      Checkout successful!
     </div>
   </div>
 
+  <!-- Footer -->
   <div id="footer"></div>
+
+  <!-- Scripts -->
+  <script src="scripts/checkout.js"></script>
+  <script>
+    // Load components
+    fetch('components/header.html')
+      .then(res => res.text())
+      .then(data => document.getElementById('header').innerHTML = data);
+
+    fetch('components/footer.html')
+      .then(res => res.text())
+      .then(data => document.getElementById('footer').innerHTML = data);
+  </script>
 </body>
 </html>
