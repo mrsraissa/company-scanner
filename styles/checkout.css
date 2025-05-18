@@ -1,176 +1,158 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Technical Report / Informe Técnico</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://unpkg.com/@zxing/library@latest"></script>
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="styles/technical-report.css">
-</head>
-<body>
-  <div class="page-wrapper">
-    <header class="header">
-      <div class="icon-title">
-        <span class="material-icons">description</span>
-        <h2 style="font-size: 18px; font-weight: normal; margin: 0;">Technical Report / Informe Técnico</h2>
-      </div>
-    </header>
-
-    <main class="content" style="flex: 1; display: flex; justify-content: center; align-items: center; flex-direction: column;">
-      <button id="startScanBtn" onclick="startScan()" style="padding: 40px; font-size: 24px; border-radius: 12px; background-color: #66BB6A; color: black; border: none; box-shadow: 0 4px 8px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px;">
-        <span class="material-icons">qr_code_scanner</span> Scan Chemical
-      </button>
-
-      <div id="scannerUI" style="display:none">
-        <div id="productInfo" style="font-size: 2.5em; font-weight: bold; margin: 20px 0; text-align: center; color: #004d00;">&nbsp;</div>
-        <video id="preview" playsinline style="width:100%; max-width:400px; border-radius:12px; margin-top:12px;"></video>
-
-        <label for="quantity">Quantity:</label>
-        <input type="number" id="quantity" required>
-
-        <label for="unit">Unit:</label>
-        <select id="unit" required>
-  <option value="">Select unit</option>
-  <option value="oz">oz</option>
-  <option value="fl oz">fl oz</option>
-  <option value="lb">lb</option>
-  <option value="ml">ml</option>
-  <option value="g">g</option>
-  <option value="EA">EA</option>
-</select>
-
-        <button onclick="addChemical()" class="action-button">
-          <span class="material-icons">add_circle</span> Add Chemical
-        </button>
-      </div>
-
-      <div id="chemicalList">
-        <ul id="listContainer"></ul>
-      </div>
-
-      <button onclick="submitReport()" class="action-button">
-        <span class="material-icons">send</span> Submit Report
-      </button>
-      <div id="responseMessage"></div>
-    </main>
-
-    <footer class="bottom-bar">
-      <button onclick="goBack()"><span class="material-icons">home</span></button>
-    </footer>
-  </div>
-
-  <script>
-    let codeReader;
-    let scannedProduct = "";
-    const chemicals = [];
-    const MAX_CHEMICALS = 50;
-
-    function startScan() {
-      document.getElementById("startScanBtn").style.display = "none";
-      document.getElementById("scannerUI").style.display = "block";
-      document.getElementById("productInfo").innerHTML = "🔍 Scanning...";
-
-      const previewElem = document.getElementById("preview");
-
-      codeReader = new ZXing.BrowserMultiFormatReader();
-      codeReader.decodeOnceFromVideoDevice(undefined, previewElem)
-        .then(result => {
-          codeReader.reset();
-          const barcode = result.text;
-
-          fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(barcode)}`)
-            .then(res => res.json())
-            .then(data => {
-              if (data.status === "found") {
-                scannedProduct = data.product;
-                document.getElementById("productInfo").innerHTML = `✅ <strong>${scannedProduct}</strong>`;
-              } else {
-                scannedProduct = "";
-                document.getElementById("productInfo").innerHTML = "❌ Product not found";
-              }
-            })
-            .catch(() => {
-              scannedProduct = "";
-              document.getElementById("productInfo").innerHTML = "❌ Error checking inventory";
-            });
-        })
-        .catch(err => {
-          console.error(err);
-          document.getElementById("productInfo").innerHTML = "❌ Error starting camera";
-        });
-    }
-
-    function addChemical() {
-      if (chemicals.length >= MAX_CHEMICALS) {
-        alert("You have reached the maximum of 50 chemicals for today.");
-        return;
-      }
-
-      const quantity = document.getElementById("quantity").value.trim();
-      const unit = document.getElementById("unit").value;
-      const employee = localStorage.getItem("employeeName") || "Unknown";
-
-      if (!scannedProduct || !quantity || !unit) {
-        alert("Please scan a valid chemical and fill out all fields.");
-        return;
-      }
-
-      chemicals.push({ employee, chemical: scannedProduct, quantity, unit });
-
-      const li = document.createElement("li");
-      const index = chemicals.length - 1;
-      li.innerHTML = `${scannedProduct} - ${quantity} ${unit} <button onclick="removeChemical(${index})" style="margin-left: 10px; color: red; background: none; border: none; cursor: pointer;">❌</button>`;
-      document.getElementById("listContainer").appendChild(li);
-
-      document.getElementById("scannerUI").style.display = "none";
-      document.getElementById("startScanBtn").style.display = "block";
-      document.getElementById("quantity").value = "";
-      document.getElementById("unit").value = "";
-      scannedProduct = "";
-    }
-
-    function submitReport() {
-      if (chemicals.length === 0) {
-        alert("Add at least one chemical before submitting.");
-        return;
-      }
-
-      const scriptURL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec";
-
-      chemicals.forEach(entry => {
-        const formData = new URLSearchParams();
-        formData.append("employee", entry.employee);
-        formData.append("chemical", entry.chemical);
-        formData.append("quantity", entry.quantity);
-        formData.append("unit", entry.unit);
-
-        fetch(scriptURL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-          },
-          body: formData.toString()
-        });
-      });
-
-      document.getElementById("responseMessage").innerText = "✅ Report submitted successfully.";
-      document.getElementById("listContainer").innerHTML = "";
-      chemicals.length = 0;
-    }
-
-    function removeChemical(index) {
-  const confirmDelete = confirm("Are you sure you want to remove this chemical?");
-  if (!confirmDelete) return;
-  chemicals.splice(index, 1);
-  const list = document.getElementById("listContainer");
-  list.removeChild(list.childNodes[index]);
+/* Base reset and layout */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Arial, sans-serif;
+  background-color: #4CAF50;
+  color: #fff;
 }
 
-    function goBack() {
-      window.location.href = 'index.html';
-    }
-  </script>
-</body>
-</html>
+/* Page structure */
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Header */
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #2E7D32;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.icon-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header .material-icons {
+  font-size: 24px;
+}
+
+/* Footer */
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #2E7D32;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.bottom-bar button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.bottom-bar .material-icons {
+  font-size: 28px;
+  color: black;
+}
+
+/* Main content */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 120px);
+  padding: 0 16px;
+}
+
+/* Buttons */
+button,
+.action-button {
+  font-size: 18px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 24px;
+  margin-top: 10px;
+}
+
+.action-button {
+  background-color: #388E3C;
+  color: white;
+  width: 100%;
+  max-width: 300px;
+  justify-content: center;
+}
+
+.action-button.secondary {
+  background-color: white;
+  color: #388E3C;
+  border: 2px solid #388E3C;
+}
+
+#startScanBtn {
+  background-color: #66BB6A;
+  color: black;
+  font-size: 24px;
+  padding: 40px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+
+#startScanBtn:hover,
+.action-button:hover {
+  transform: scale(1.05);
+}
+
+/* Scanner UI */
+.container,
+#scannerUI {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #f9f9f9;
+  color: #000;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+  width: 100%;
+  max-width: 400px;
+}
+
+#productInfo {
+  font-size: 2.5em;
+  font-weight: bold;
+  margin: 20px 0;
+  text-align: center;
+  color: #004d00;
+}
+
+input, select {
+  font-size: 16px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #bbb;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+video#preview {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 12px;
+}
+
