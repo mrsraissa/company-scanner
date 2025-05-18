@@ -13,12 +13,12 @@
     <header class="header">
       <div class="icon-title">
         <span class="material-icons">description</span>
-        <h2>Technical Report / Informe Técnico</h2>
+        <h2 style="font-size: 18px; font-weight: normal; margin: 0;">Technical Report / Informe Técnico</h2>
       </div>
     </header>
 
-    <main class="content">
-      <button id="startScanBtn" onclick="startScan()">
+    <main class="content" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: calc(100vh - 120px);">
+      <button id="startScanBtn" onclick="startScan()" style="padding: 40px; font-size: 24px; border-radius: 12px; background-color: #66BB6A; color: black; border: none; box-shadow: 0 4px 8px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px;">
         <span class="material-icons">qr_code_scanner</span> Scan Chemical
       </button>
 
@@ -49,9 +49,8 @@
         <ul id="listContainer"></ul>
       </div>
 
-      <button onclick="submitReport()" class="action-button">
-        <span class="material-icons">send</span> Submit Report
-      </button>
+      <button onclick="submitReport()" class="action-button" style="margin-top: 20px; align-self: center; padding: 20px 30px; font-size: 20px; border-radius: 12px; background-color: #388E3C; color: white; display: flex; align-items: center; gap: 10px;">
+$1</button>
       <div id="responseMessage"></div>
     </main>
 
