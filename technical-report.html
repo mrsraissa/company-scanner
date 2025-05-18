@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Technical Report / Informe Técnico</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://unpkg.com/@zxing/library@latest"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="styles/technical-report.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <header class="header">
+      <div class="icon-title">
+        <span class="material-icons">description</span>
+        <h2>Technical Report / Informe Técnico</h2>
+      </div>
+    </header>
+
+    <main class="content">
+      <button id="startScanBtn" onclick="startScan()">
+        <span class="material-icons">qr_code_scanner</span> Scan Chemical
+      </button>
+
+      <div id="scannerUI" style="display:none">
+        <div id="productInfo">&nbsp;</div>
+        <video id="preview" playsinline></video>
+
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" required>
+
+        <label for="unit">Unit:</label>
+        <select id="unit" required>
+          <option value="">Select unit</option>
+          <option value="ml">ml</option>
+          <option value="g">g</option>
+          <option value="L">L</option>
+          <option value="kg">kg</option>
+          <option value="units">units</option>
+        </select>
+
+        <button onclick="addChemical()" class="action-button">
+          <span class="material-icons">add_circle</span> Add Chemical
+        </button>
+      </div>
+
+      <div id="chemicalList">
+        <h3>Today's Chemicals</h3>
+        <ul id="listContainer"></ul>
+      </div>
+
+      <button onclick="submitReport()" class="action-button">
+        <span class="material-icons">send</span> Submit Report
+      </button>
+      <div id="responseMessage"></div>
+    </main>
+
+    <footer class="bottom-bar">
+      <button onclick="goBack()"><span class="material-icons">home</span></button>
+    </footer>
+  </div>
+
+  <script>
+    let codeReader;
+    let previewElem;
+    let scannedProduct = "";
+    const chemicals = [];
+
+    window.onload = () => {
+      previewElem = document.getElementById("preview");
+    };
+
+    function startScan() {
+      document.getElementById("startScanBtn").style.display = "none";
+      document.getElementById("scannerUI").style.display = "block";
+      document.getElementById("productInfo").innerHTML = "🔍 Scanning...";
+
+      codeReader = new ZXing.BrowserMultiFormatReader();
+      codeReader.decodeOnceFromVideoDevice(undefined, previewElem)
+        .then(result => {
+          codeReader.reset();
+          const barcode = result.text;
+
+          fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(barcode)}`)
+            .then(res => res.json())
+            .then(data => {
+              if (data.status === "found") {
+                scannedProduct = data.product;
+                document.getElementById("productInfo").innerHTML = `✅ <strong>${scannedProduct}</strong>`;
+              } else {
+                scannedProduct = "";
+                document.getElementById("productInfo").innerHTML = "❌ Product not found";
+              }
+            })
+            .catch(() => {
+              scannedProduct = "";
+              document.getElementById("productInfo").innerHTML = "❌ Error checking inventory";
+            });
+        })
+        .catch(err => {
+          console.error(err);
+          document.getElementById("productInfo").innerHTML = "❌ Error starting camera";
+        });
+    }
+
+    function addChemical() {
+      const quantity = document.getElementById("quantity").value.trim();
+      const unit = document.getElementById("unit").value;
+      const employee = localStorage.getItem("employeeName") || "Unknown";
+
+      if (!scannedProduct || !quantity || !unit) {
+        alert("Please scan a valid chemical and fill out all fields.");
+        return;
+      }
+
+      chemicals.push({ employee, chemical: scannedProduct, quantity, unit });
+
+      const li = document.createElement("li");
+      li.textContent = `${scannedProduct} - ${quantity} ${unit}`;
+      document.getElementById("listContainer").appendChild(li);
+
+      document.getElementById("scannerUI").style.display = "none";
+      document.getElementById("startScanBtn").style.display = "block";
+      document.getElementById("quantity").value = "";
+      document.getElementById("unit").value = "";
+      scannedProduct = "";
+    }
+
+    function submitReport() {
+      if (chemicals.length === 0) {
+        alert("Add at least one chemical before submitting.");
+        return;
+      }
+
+      const scriptURL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec";
+
+      chemicals.forEach(entry => {
+        const formData = new URLSearchParams();
+        formData.append("employee", entry.employee);
+        formData.append("chemical", entry.chemical);
+        formData.append("quantity", entry.quantity);
+        formData.append("unit", entry.unit);
+
+        fetch(scriptURL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: formData.toString()
+        });
+      });
+
+      document.getElementById("responseMessage").innerText = "✅ Report submitted successfully.";
+      document.getElementById("listContainer").innerHTML = "";
+      chemicals.length = 0;
+    }
+
+    function goBack() {
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>
