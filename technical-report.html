@@ -23,8 +23,9 @@
       </button>
 
       <div id="scannerUI" style="display:none">
+        <video id="preview" playsinline $1></video>
+
         <div id="productInfo" style="font-size: 2.5em; font-weight: bold; margin: 20px 0; text-align: center; color: #004d00;">&nbsp;</div>
-        <video id="preview" playsinline style="width:100%; max-width:400px; border-radius:12px; margin-top:12px;"></video>
 
         <label for="quantity">Quantity:</label>
         <input type="number" id="quantity" required>
@@ -50,7 +51,8 @@
       </div>
 
       <button onclick="submitReport()" class="action-button" style="margin-top: 20px; align-self: center; padding: 20px 30px; font-size: 20px; border-radius: 12px; background-color: #388E3C; color: white; display: flex; align-items: center; gap: 10px;">
-$1</button>
+  <span class="material-icons">send</span> Submit Report
+</button>
       <div id="responseMessage"></div>
     </main>
 
