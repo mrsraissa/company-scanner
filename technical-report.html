@@ -24,7 +24,7 @@
 
       <div id="scannerUI" style="display:none">
         <div id="productInfo">&nbsp;</div>
-        <video id="preview" playsinline></video>
+        <video id="preview" playsinline style="width:100%; max-width:400px; border-radius:12px; margin-top:12px;"></video>
 
         <label for="quantity">Quantity:</label>
         <input type="number" id="quantity" required>
@@ -62,18 +62,16 @@
 
   <script>
     let codeReader;
-    let previewElem;
     let scannedProduct = "";
     const chemicals = [];
-
-    window.onload = () => {
-      previewElem = document.getElementById("preview");
-    };
+    const MAX_CHEMICALS = 50;
 
     function startScan() {
       document.getElementById("startScanBtn").style.display = "none";
       document.getElementById("scannerUI").style.display = "block";
       document.getElementById("productInfo").innerHTML = "🔍 Scanning...";
+
+      const previewElem = document.getElementById("preview");
 
       codeReader = new ZXing.BrowserMultiFormatReader();
       codeReader.decodeOnceFromVideoDevice(undefined, previewElem)
@@ -104,6 +102,11 @@
     }
 
     function addChemical() {
+      if (chemicals.length >= MAX_CHEMICALS) {
+        alert("You have reached the maximum of 50 chemicals for today.");
+        return;
+      }
+
       const quantity = document.getElementById("quantity").value.trim();
       const unit = document.getElementById("unit").value;
       const employee = localStorage.getItem("employeeName") || "Unknown";
