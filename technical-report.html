@@ -23,7 +23,7 @@
       </button>
 
       <div id="scannerUI" style="display:none">
-        <div id="productInfo" style="font-size: 1.5em; font-weight: bold; margin-top: 10px; text-align: center;">&nbsp;</div>
+        <div id="productInfo" style="font-size: 2em; font-weight: bold; margin-top: 10px; text-align: center;">&nbsp;</div>
         <video id="preview" playsinline style="width:100%; max-width:400px; border-radius:12px; margin-top:12px;"></video>
 
         <label for="quantity">Quantity:</label>
@@ -46,7 +46,6 @@
       </div>
 
       <div id="chemicalList">
-        <h3>Today's Chemicals</h3>
         <ul id="listContainer"></ul>
       </div>
 
@@ -120,7 +119,8 @@
       chemicals.push({ employee, chemical: scannedProduct, quantity, unit });
 
       const li = document.createElement("li");
-      li.textContent = `${scannedProduct} - ${quantity} ${unit}`;
+      const index = chemicals.length - 1;
+      li.innerHTML = `${scannedProduct} - ${quantity} ${unit} <button onclick="removeChemical(${index})" style="margin-left: 10px; color: red; background: none; border: none; cursor: pointer;">❌</button>`;
       document.getElementById("listContainer").appendChild(li);
 
       document.getElementById("scannerUI").style.display = "none";
@@ -159,6 +159,14 @@
       document.getElementById("listContainer").innerHTML = "";
       chemicals.length = 0;
     }
+
+    function removeChemical(index) {
+  const confirmDelete = confirm("Are you sure you want to remove this chemical?");
+  if (!confirmDelete) return;
+  chemicals.splice(index, 1);
+  const list = document.getElementById("listContainer");
+  list.removeChild(list.childNodes[index]);
+}
 
     function goBack() {
       window.location.href = 'index.html';
