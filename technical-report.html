@@ -23,7 +23,7 @@
       </button>
 
       <div id="scannerUI" style="display:none">
-        <div id="productInfo">&nbsp;</div>
+        <div id="productInfo" style="font-size: 1.5em; font-weight: bold; margin-top: 10px; text-align: center;">&nbsp;</div>
         <video id="preview" playsinline style="width:100%; max-width:400px; border-radius:12px; margin-top:12px;"></video>
 
         <label for="quantity">Quantity:</label>
@@ -31,13 +31,14 @@
 
         <label for="unit">Unit:</label>
         <select id="unit" required>
-          <option value="">Select unit</option>
-          <option value="ml">ml</option>
-          <option value="g">g</option>
-          <option value="L">L</option>
-          <option value="kg">kg</option>
-          <option value="units">units</option>
-        </select>
+  <option value="">Select unit</option>
+  <option value="oz">oz</option>
+  <option value="fl oz">fl oz</option>
+  <option value="lb">lb</option>
+  <option value="ml">ml</option>
+  <option value="g">g</option>
+  <option value="EA">EA</option>
+</select>
 
         <button onclick="addChemical()" class="action-button">
           <span class="material-icons">add_circle</span> Add Chemical
