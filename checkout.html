@@ -25,7 +25,7 @@
       <div class="container" id="scannerUI" style="display:none; align-items: center;">
         <video id="preview" playsinline></video>
 
-        <div id="productInfo" style="font-size: 3em; font-weight: bold; margin: 20px 0; text-align: center; color: #004d00;">&nbsp;</div>
+        <div id="productInfo" style="font-size: 2em; font-weight: bold; margin: 20px 0; text-align: center; color: #004d00;">&nbsp;</div>
 
         <label><span class="material-icons">edit</span> Quantity:</label>
         <input type="number" id="quantity" oninput="confirmSubmission()">
@@ -65,7 +65,7 @@
       document.getElementById("productInfo").innerHTML = "🔍 Searching for chemical...";
 
       codeReader = new ZXing.BrowserMultiFormatReader();
-      codeReader.decodeOnceFromVideoDevice(undefined, previewElem)
+      codeReader.decodeOnceFromVideoDevice(null, previewElem)
         .then(result => {
           codeReader.reset();
           const barcode = result.text;
