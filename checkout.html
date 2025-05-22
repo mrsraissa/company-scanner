@@ -25,12 +25,12 @@
       <div class="container" id="scannerUI" style="display:none; align-items: center;">
         <video id="preview" playsinline></video>
 
-        <div id="productInfo" style="font-size: 2em; font-weight: bold; margin: 20px 0; text-align: center; color: #004d00;">&nbsp;</div>
+        <div id="productInfo" style="font-size: 1.6em; font-weight: bold; margin: 20px 0; text-align: center; color: #004d00;">&nbsp;</div>
 
         <label><span class="material-icons">edit</span> Quantity:</label>
-        <input type="number" id="quantity" oninput="confirmSubmission()">
+        <input type="number" id="quantity" oninput="confirmSubmission()" style="margin-bottom: 8px;">
 
-        <div id="confirmInfo" style="text-align: center; font-size: 1.2em; margin-top: 20px; color: #004d00;"></div>
+        <div id="confirmInfo" style="text-align: center; font-size: 1.2em; margin-top: 10px; color: #004d00; font-weight: 500;"></div>
 
         <button id="submitBtn" onclick="submitData()" class="action-button" style="margin-top: 20px; align-self: center; padding: 20px 30px; font-size: 20px; border-radius: 12px; background-color: #388E3C; color: white; display: flex; align-items: center; gap: 10px;">
           <span class="material-icons">send</span> Submit
@@ -65,7 +65,7 @@
       document.getElementById("productInfo").innerHTML = "🔍 Searching for chemical...";
 
       codeReader = new ZXing.BrowserMultiFormatReader();
-      codeReader.decodeOnceFromVideoDevice(null, previewElem)
+      codeReader.decodeOnceFromVideoDevice(undefined, previewElem)
         .then(result => {
           codeReader.reset();
           const barcode = result.text;
