@@ -96,12 +96,40 @@
   </div>
 
   <script>
-    // Translate static text
     document.getElementById("headerText").innerText = t.header;
     document.getElementById("scanText").innerText = t.scan;
     document.getElementById("submitText").innerText = t.submit;
     document.getElementById("quantityLabel").innerText = t.quantity;
     document.getElementById("addText").innerText = t.add;
+
+    let codeReader;
+    let previewElem;
+
+    window.onload = () => {
+      previewElem = document.getElementById('preview');
+    };
+
+    function openScanner() {
+      document.getElementById('startScanBtn').style.display = 'none';
+      document.getElementById('scannerUI').style.display = 'flex';
+      document.getElementById('productInfo').innerText = t.searching;
+
+      codeReader = new ZXing.BrowserMultiFormatReader();
+      codeReader.decodeOnceFromVideoDevice(undefined, previewElem)
+        .then(result => {
+          codeReader.reset();
+          const barcode = result.text;
+          document.getElementById("productInfo").innerHTML = `✅ <strong>${barcode}</strong>`;
+        })
+        .catch(err => {
+          console.error(err);
+          document.getElementById("productInfo").innerText = "❌ Error starting camera";
+        });
+    }
+
+    function goBack() {
+      window.location.href = 'index.html';
+    }
   </script>
 </body>
 </html>
