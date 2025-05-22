@@ -4,7 +4,30 @@
   <meta charset="UTF-8">
   <title>Check Out / Registro de salida</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://unpkg.com/@zxing/library@latest">
+  <script src="https://unpkg.com/@zxing/library@latest"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="styles/technical-report.css">
+  <style>
+    .scanner-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 60%;
+      height: 30%;
+      transform: translate(-50%, -50%);
+      border: 3px solid limegreen;
+      border-radius: 8px;
+      pointer-events: none;
+      animation: pulse-border 1s infinite;
+    }
+
+    @keyframes pulse-border {
+      0% { box-shadow: 0 0 0 0 rgba(50, 205, 50, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(50, 205, 50, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(50, 205, 50, 0); }
+    }
+  </style>
+  <script>
     function rescanChemical() {
       document.getElementById("quantity").value = "";
       document.querySelector('.scanner-overlay').style.display = 'block';
@@ -41,28 +64,6 @@
         });
     }
   </script>
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="styles/technical-report.css">
-  <style>
-    .scanner-overlay {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 60%;
-      height: 30%;
-      transform: translate(-50%, -50%);
-      border: 3px solid limegreen;
-      border-radius: 8px;
-      pointer-events: none;
-      animation: pulse-border 1s infinite;
-    }
-
-    @keyframes pulse-border {
-      0% { box-shadow: 0 0 0 0 rgba(50, 205, 50, 0.7); }
-      70% { box-shadow: 0 0 0 10px rgba(50, 205, 50, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(50, 205, 50, 0); }
-    }
-  </style>
 </head>
 <body>
   <div class="page-wrapper">
