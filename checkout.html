@@ -69,8 +69,7 @@
         .then(result => {
           codeReader.reset();
           const barcode = result.text;
-          document.getElementById('barcode').value = barcode;
-
+          
           fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(barcode)}`)
             .then(res => res.json())
             .then(data => {
