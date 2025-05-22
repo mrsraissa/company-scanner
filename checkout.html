@@ -73,7 +73,7 @@
 </head>
 <body>
   <div class="page-wrapper">
-    <header class="header" style="background-color: #1E88E5;">
+    <header class="header">
       <div class="icon-title">
         <span class="material-icons">description</span>
         <h2 style="font-size: 18px; font-weight: normal; margin: 0;">Check Out / Registro de salida</h2>
@@ -81,7 +81,7 @@
     </header>
 
     <main class="content" style="flex: 1; display: flex; flex-direction: column; align-items: center; padding: 80px 20px 120px; overflow-y: visible; position: relative;">
-      <button id="startScanBtn" style="padding: 40px; font-size: 24px; border-radius: 12px; background-color: #42A5F5; color: white; border: none; box-shadow: 0 4px 8px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px;">
+      <button id="startScanBtn" onclick="openScanner()" style="padding: 40px; font-size: 24px; border-radius: 12px; background-color: #DC6D18; color: black; border: none; box-shadow: 0 4px 8px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px;">
         <span class="material-icons">qr_code_scanner</span> Scan Chemical
       </button>
 
@@ -105,7 +105,7 @@
         <ul id="listContainer"></ul>
       </div>
 
-      <button onclick="submitData()" class="action-button" style="margin-top: 20px; align-self: center; padding: 20px 30px; font-size: 20px; border-radius: 12px; background-color: #1565C0; color: white; display: flex; align-items: center; gap: 10px;">
+      <button onclick="submitData()" class="action-button" style="margin-top: 20px; align-self: center; padding: 20px 30px; font-size: 20px; border-radius: 12px; background-color: #DC6D18; color: white; display: flex; align-items: center; gap: 10px;">
   <span class="material-icons">send</span> Submit Report
       </button>
       <div id="result"></div>
@@ -270,3 +270,4 @@
   </script>
 </body>
 </html>
+
