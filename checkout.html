@@ -88,7 +88,9 @@
     function openScanner() {
       document.getElementById('startScanBtn').style.display = 'none';
       document.getElementById('scannerUI').style.display = 'flex';
-      document.getElementById('scannerUI').scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => {
+        document.getElementById('scannerUI').scrollIntoView({ behavior: 'smooth' });
+      }, 300);
       document.getElementById("productInfo").innerHTML = "🔍 Searching for chemical...";
 
       codeReader = new ZXing.BrowserMultiFormatReader();
@@ -126,7 +128,11 @@
         return;
       }
       const quantity = document.getElementById("quantity").value.trim();
-      const employee = localStorage.getItem("employeeName") || prompt("Enter your name:") || "Unknown";
+      let employee = localStorage.getItem("employeeName");
+      if (!employee) {
+        employee = prompt("Enter your name:");
+        if (employee) localStorage.setItem("employeeName", employee);
+      }
       if (!lastProductName || !quantity) {
         alert("Please scan a valid chemical and enter quantity.");
         return;
@@ -136,7 +142,13 @@
 
       const li = document.createElement("li");
       const index = chemicals.length - 1;
-      li.innerHTML = `<span style=\"flex-grow: 1;\">${lastProductName} — ${quantity}</span><button onclick=\"removeChemical(${index})\" style=\"margin-left: auto; color: red; background: none; border: none; cursor: pointer;\">❌</button>`;
+      li.style.justifyContent = "space-between";
+      li.style.alignItems = "center";
+      li.innerHTML = `<span>${lastProductName} — ${quantity}</span>
+        <button onclick="removeChemical(${index})" 
+          style="color: red; background: none; border: none; cursor: pointer; margin-left: 10px;">
+          ❌
+        </button>`;
       li.style.display = "flex";
       document.getElementById("listContainer").appendChild(li);
 
