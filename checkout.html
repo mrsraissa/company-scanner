@@ -61,139 +61,107 @@
       <button type="button" onclick="goBack()"><span class="material-icons">home</span></button>
     </footer>
   </div>
-
   <script>
-    let codeReader;
-    let lastProductName = "";
-    const chemicals = [];
-    function removeChemical(index) {
-      chemicals.splice(index, 1);
-      const list = document.getElementById("listContainer");
-      list.removeChild(list.childNodes[index]);
-    }
-    let previewElem;
+  let codeReader;
+  let lastProductName = "";
+  const chemicals = [];
+  let previewElem;
 
-    window.onload = () => {
-      previewElem = document.getElementById('preview');
-    };
+  window.onload = () => {
+    previewElem = document.getElementById('preview');
+  };
 
-    function openScanner() {
-      document.getElementById('startScanBtn').style.display = 'none';
-      document.getElementById('scannerUI').style.display = 'flex';
-      document.getElementById("productInfo").innerHTML = "🔍 Searching for chemical...";
+  function openScanner() {
+    document.getElementById('startScanBtn').style.display = 'none';
+    document.getElementById('scannerUI').style.display = 'flex';
+    document.getElementById("productInfo").innerHTML = "🔍 Searching for chemical...";
 
-      codeReader = new ZXing.BrowserMultiFormatReader();
-      codeReader.decodeOnceFromVideoDevice(null, previewElem)
-        .then(result => {
-          codeReader.reset();
-          const barcode = result.text;
-          
-          fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(barcode)}`)
-            .then(res => res.json())
-            .then(data => {
-              if (data.status === "found") {
-                lastProductName = data.product;
-                document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong>`;
-              } else {
-                document.getElementById("productInfo").innerHTML = "❌ Product not found";
-              }
-            })
-            .catch(() => {
-              document.getElementById("productInfo").innerHTML = "❌ Error checking inventory";
-            });
-        })
-        .catch(err => {
-          console.error(err);
-          document.getElementById("productInfo").innerHTML = "❌ Error starting camera";
-        });
-    }
+    codeReader = new ZXing.BrowserMultiFormatReader();
+    codeReader.decodeOnceFromVideoDevice(null, previewElem)
+      .then(result => {
+        codeReader.reset();
+        const barcode = result.text;
 
-    function confirmSubmission() {
-      const quantity = document.getElementById("quantity").value.trim();
-      if (!lastProductName || !quantity) {
-        document.getElementById("result").innerText = "⚠️ Please scan a product and enter quantity.";
-        return;
-      }
-      document.getElementById("confirmInfo").innerHTML = `📋 Confirm: <strong>${lastProductName}</strong> — Qty: <strong>${quantity}</strong>`;
-    }
-      document.getElementById("confirmInfo").innerHTML = `📋 Confirm: <strong>${lastProductName}</strong> — Qty: <strong>${quantity}</strong>`;
-    }
-
-    function addChemical() {
-      const quantity = document.getElementById("quantity").value.trim();
-      const employee = localStorage.getItem("employeeName") || "Unknown";
-      if (!lastProductName || !quantity) {
-        document.getElementById("result").innerText = "⚠️ Please scan a product and enter quantity.";
-        return;
-      }
-      chemicals.push({ product: lastProductName, quantity, employee });
-      const li = document.createElement("li");
-      const index = chemicals.length - 1;
-      li.innerHTML = `${lastProductName} — ${quantity} <button onclick="removeChemical(${index})" style="margin-left: 10px; color: red; background: none; border: none; cursor: pointer;">❌</button>`;
-      document.getElementById("listContainer").appendChild(li);
-      document.getElementById("quantity").value = "";
-      document.getElementById("productInfo").innerHTML = "";
-      document.getElementById("confirmInfo").innerHTML = "";
-      document.getElementById("scannerUI").style.display = "none";
-      document.getElementById("startScanBtn").style.display = "flex";
-    }
-
-    function submitData() {
-      if (chemicals.length === 0) {
-        document.getElementById("result").innerText = "⚠️ Add at least one chemical before submitting.";
-        return;
-      }
-      const scriptURL = "https://script.google.com/macros/s/AKfycbx_Bl4QAbqVSZndyQT97xMBKow-8AjLC3A6oHHbpGAziaIOCi1Mvqqnt9ofYA4vT9gUvA/exec";
-      chemicals.forEach(entry => {
-        const formData = new URLSearchParams();
-        formData.append("employee", entry.employee);
-        formData.append("chemical", entry.product);
-        formData.append("quantity", entry.quantity);
-        fetch(scriptURL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: formData.toString()
-        });
+        fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(barcode)}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.status === "found") {
+              lastProductName = data.product;
+              document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong>`;
+            } else {
+              document.getElementById("productInfo").innerHTML = "❌ Product not found";
+            }
+          })
+          .catch(() => {
+            document.getElementById("productInfo").innerHTML = "❌ Error checking inventory";
+          });
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById("productInfo").innerHTML = "❌ Error starting camera";
       });
-      document.getElementById("result").innerText = "✅ Submitted successfully.";
-      document.getElementById("listContainer").innerHTML = "";
-      chemicals.length = 0;
-    }
-        return;
-      }
+  }
 
-      fetch("https://script.google.com/macros/s/AKfycbx_Bl4QAbqVSZndyQT97xMBKow-8AjLC3A6oHHbpGAziaIOCi1Mvqqnt9ofYA4vT9gUvA/exec", {
+  function confirmSubmission() {
+    const quantity = document.getElementById("quantity").value.trim();
+    if (!lastProductName || !quantity) {
+      document.getElementById("result").innerText = "⚠️ Please scan a product and enter quantity.";
+      return;
+    }
+    document.getElementById("confirmInfo").innerHTML = `📋 Confirm: <strong>${lastProductName}</strong> — Qty: <strong>${quantity}</strong>`;
+  }
+
+  function addChemical() {
+    const quantity = document.getElementById("quantity").value.trim();
+    const employee = localStorage.getItem("employeeName") || "Unknown";
+    if (!lastProductName || !quantity) {
+      document.getElementById("result").innerText = "⚠️ Please scan a product and enter quantity.";
+      return;
+    }
+    chemicals.push({ product: lastProductName, quantity, employee });
+    const li = document.createElement("li");
+    const index = chemicals.length - 1;
+    li.innerHTML = `${lastProductName} — ${quantity} <button onclick="removeChemical(${index})" style="margin-left: 10px; color: red; background: none; border: none; cursor: pointer;">❌</button>`;
+    document.getElementById("listContainer").appendChild(li);
+    document.getElementById("quantity").value = "";
+    document.getElementById("productInfo").innerHTML = "";
+    document.getElementById("confirmInfo").innerHTML = "";
+    document.getElementById("scannerUI").style.display = "none";
+    document.getElementById("startScanBtn").style.display = "flex";
+  }
+
+  function submitData() {
+    if (chemicals.length === 0) {
+      document.getElementById("result").innerText = "⚠️ Add at least one chemical before submitting.";
+      return;
+    }
+    const scriptURL = "https://script.google.com/macros/s/AKfycbx_Bl4QAbqVSZndyQT97xMBKow-8AjLC3A6oHHbpGAziaIOCi1Mvqqnt9ofYA4vT9gUvA/exec";
+    chemicals.forEach(entry => {
+      const formData = new URLSearchParams();
+      formData.append("employee", entry.employee);
+      formData.append("chemical", entry.product);
+      formData.append("quantity", entry.quantity);
+      fetch(scriptURL, {
         method: "POST",
         mode: "no-cors",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: `user=${encodeURIComponent(user)}&quantity=${encodeURIComponent(quantity)}&barcode=${encodeURIComponent(barcode)}`
-      })
-      .then(() => {
-        document.getElementById("result").innerHTML =
-          `✅ Submitted:<br><strong>${lastProductName || barcode}</strong><br>📦 Qty: ${quantity} | 👤 ${user}`;
-
-        document.getElementById("quantity").value = "";
-        document.getElementById("barcode").value = "";
-        document.getElementById("productInfo").innerHTML = "";
-        document.getElementById("scannerUI").style.display = "none";
-        document.getElementById("startScanBtn").style.display = "flex";
-      })
-      .catch((err) => {
-        console.error("Send error:", err);
-        document.getElementById("result").innerText = "❌ Error sending data.";
-      })
-      .finally(() => {
-        submitBtn.disabled = false;
-        submitBtn.innerText = "Submit";
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: formData.toString()
       });
-    }
+    });
+    document.getElementById("result").innerText = "✅ Submitted successfully.";
+    document.getElementById("listContainer").innerHTML = "";
+    chemicals.length = 0;
+  }
 
-    function goBack() {
-      window.location.href = 'index.html';
-    }
-  </script>
+  function removeChemical(index) {
+    chemicals.splice(index, 1);
+    const list = document.getElementById("listContainer");
+    list.removeChild(list.childNodes[index]);
+  }
+
+  function goBack() {
+    window.location.href = 'index.html';
+  }
+</script>
 </body>
 </html>
