@@ -2,103 +2,102 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>📋 Main Menu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
     body {
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       text-align: center;
+      margin: 0;
       padding: 20px;
+      background: #f0fdf4;
     }
-    button {
+
+    h2 {
+      margin-top: 20px;
+    }
+
+    .menu-button {
       font-size: 16px;
-      padding: 10px;
-      margin: 10px;
+      padding: 14px 24px;
+      margin: 12px auto;
       width: 80%;
+      max-width: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: none;
+      border-radius: 12px;
+      background-color: #198450;
+      color: white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      cursor: pointer;
     }
-    select, input {
-      font-size: 16px;
-      padding: 8px;
-      margin-top: 10px;
+
+    .menu-button:hover {
+      background-color: #106d3f;
+    }
+
+    #displayName {
+      font-weight: bold;
+      color: #065f46;
     }
   </style>
 </head>
 <body>
   <h2>📋 Main Menu</h2>
-  <p>👤 Logged in as: <strong id="displayName"></strong></p>
+  <p>👤 Logged in as: <span id="displayName"></span></p>
 
-  <button id="btnCheckout" onclick="location.href='checkout.html'">Check Out </button><br>
-  <button id="btnReturn" onclick="alert('Coming soon')">Product Return</button><br>
-  <button id="btnReport" onclick="location.href='technical-report.html'">Technical Report </button><br>
-  <button id="btnLogout" onclick="logout()">Logout</button>
+  <button id="btnCheckout" class="menu-button" onclick="location.href='checkout.html'">
+    <span class="material-icons">qr_code</span> 
+  </button>
 
-  <div style="margin-top: 20px;">
-    <label for="langSelect">Language:</label>
-    <select id="langSelect" onchange="setLanguage()">
-      <option value="en">English</option>
-      <option value="es">Español</option>
-    </select>
-  </div>
+  <button id="btnReport" class="menu-button" onclick="location.href='technical-report.html'">
+    <span class="material-icons">description</span>
+  </button>
+
+  <button id="btnReturn" class="menu-button" onclick="alert('Coming soon')">
+    <span class="material-icons">undo</span>
+  </button>
+
+  <button class="menu-button" onclick="logout()">
+    <span class="material-icons">logout</span> Logout
+  </button>
 
   <script>
-    const translations = {
-      "Check Out / Registro de salida": {
-        en: "Check Out",
-        es: "Registro de salida"
-      },
-      "Product Return": {
-        en: "Product Return",
-        es: "Devolución de producto"
-      },
-      "Technical Report / Informe Técnico": {
-        en: "Technical Report",
-        es: "Informe Técnico"
-      },
-      "Logout": {
-        en: "Logout",
-        es: "Cerrar sesión"
-      }
-    };
-
-    const lang = localStorage.getItem('language') || 'en';
-    document.getElementById('langSelect').value = lang;
-
-    function translatePage() {
-      const lang = localStorage.getItem('language') || 'en';
-
-      const map = {
-        btnCheckout: "Check Out / Registro de salida",
-        btnReturn: "Product Return",
-        btnReport: "Technical Report / Informe Técnico",
-        btnLogout: "Logout"
-      };
-
-      for (const id in map) {
-        const el = document.getElementById(id);
-        if (el && translations[map[id]]) {
-          el.innerText = translations[map[id]][lang];
-        }
-      }
-    }
-
-    function setLanguage() {
-      const selectedLang = document.getElementById('langSelect').value;
-      localStorage.setItem('language', selectedLang);
-      translatePage();
-    }
-
     const name = localStorage.getItem('employeeName');
+    const lang = localStorage.getItem('preferredLanguage') || 'en';
+
     if (!name) {
       window.location.href = 'login.html';
     } else {
       document.getElementById('displayName').innerText = name;
     }
 
-    translatePage();
+    const translations = {
+      en: {
+        checkout: "Check Out",
+        report: "Technical Report",
+        return: "Product Return"
+      },
+      es: {
+        checkout: "Registro de salida",
+        report: "Informe Técnico",
+        return: "Devolución de producto"
+      }
+    };
+
+    const t = translations[lang];
+
+    document.getElementById('btnCheckout').innerHTML += `${t.checkout} / ${translations.es.checkout}`;
+    document.getElementById('btnReport').innerHTML += `${t.report} / ${translations.es.report}`;
+    document.getElementById('btnReturn').innerHTML += `${t.return} / ${translations.es.return}`;
 
     function logout() {
       localStorage.removeItem('employeeName');
-      localStorage.removeItem('language');
+      localStorage.removeItem('preferredLanguage');
       window.location.href = 'login.html';
     }
   </script>
