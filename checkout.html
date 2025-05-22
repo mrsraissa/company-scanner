@@ -76,6 +76,7 @@
   <script>
     let codeReader;
     let lastProductName = "";
+    let lastBarcode = "";
     const chemicals = [];
     const MAX_CHEMICALS = 50;
 
@@ -94,6 +95,7 @@
         .then(result => {
           codeReader.reset();
           const barcode = result.text;
+          lastBarcode = barcode;
 
           fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(barcode)}`)
             .then(res => res.json())
@@ -129,11 +131,12 @@
         return;
       }
 
-      chemicals.push({ product: lastProductName, quantity, employee });
+      chemicals.push({ product: lastProductName, quantity, employee, barcode: lastBarcode });
 
       const li = document.createElement("li");
       const index = chemicals.length - 1;
-      li.innerHTML = `${lastProductName} — ${quantity} <button onclick="removeChemical(${index})" style="margin-left: 10px; color: red; background: none; border: none; cursor: pointer;">❌</button>`;
+      li.innerHTML = `<span style=\"flex: 1;\">${lastProductName} — ${quantity}</span><button onclick=\"removeChemical(${index})\" style=\"margin-left: auto; color: red; background: none; border: none; cursor: pointer;\">❌</button>`;
+      li.style.display = "flex";
       document.getElementById("listContainer").appendChild(li);
 
       document.getElementById("scannerUI").style.display = "none";
@@ -154,6 +157,7 @@
         const formData = new URLSearchParams();
         formData.append("employee", entry.employee);
         formData.append("chemical", entry.product);
+        formData.append("barcode", entry.barcode);
         formData.append("quantity", entry.quantity);
 
         fetch(scriptURL, {
@@ -165,6 +169,7 @@
       });
 
       document.getElementById("result").innerText = "✅ Submitted successfully.";
+      
       document.getElementById("listContainer").innerHTML = "";
       chemicals.length = 0;
     }
