@@ -65,7 +65,6 @@
   <button class="menu-button" onclick="logout()">
     <span class="material-icons">logout</span> Logout
   </button>
-
   <script>
   const name = localStorage.getItem('employeeName');
   const lang = localStorage.getItem('preferredLanguage') || 'en';
@@ -103,6 +102,13 @@
   document.getElementById('btnReport').innerHTML += t.report;
   document.getElementById('btnReturn').innerHTML += t.return;
   document.querySelector("button.menu-button:last-of-type").innerHTML = `<span class="material-icons">logout</span> ${t.logout}`;
-  </script>
+
+  // ✅ Add this to enable logout
+  function logout() {
+    localStorage.removeItem('employeeName');
+    localStorage.removeItem('preferredLanguage');
+    window.location.href = 'login.html';
+  }
+</script>
 </body>
 </html>
