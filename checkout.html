@@ -41,6 +41,18 @@
           Scan Again
         </button>
 
+        <ul id="listContainer" style="margin-top: 20px; list-style: none; padding: 0; color: #fff;"></ul>
+
+        <button onclick="addChemical()" class="action-button">
+          <span class="material-icons">add_circle</span>
+          Add Chemical
+        </button>
+
+        <button onclick="submitData()" class="action-button" style="margin-top: 20px; align-self: center; padding: 20px 30px; font-size: 20px; border-radius: 12px; background-color: #388E3C; color: white; display: flex; align-items: center; gap: 10px;">
+          <span class="material-icons">send</span>
+          Submit All
+        </button>
+
         <div id="result"></div>
       </div>
     </main>
@@ -53,6 +65,7 @@
   <script>
     let codeReader;
     let lastProductName = "";
+    const chemicals = [];
     let previewElem;
 
     window.onload = () => {
@@ -98,20 +111,49 @@
       }
       document.getElementById("confirmInfo").innerHTML = `📋 Confirm: <strong>${lastProductName}</strong> — Qty: <strong>${quantity}</strong>`;
     }
+      document.getElementById("confirmInfo").innerHTML = `📋 Confirm: <strong>${lastProductName}</strong> — Qty: <strong>${quantity}</strong>`;
+    }
+
+    function addChemical() {
+      const quantity = document.getElementById("quantity").value.trim();
+      const employee = localStorage.getItem("employeeName") || "Unknown";
+      if (!lastProductName || !quantity) {
+        document.getElementById("result").innerText = "⚠️ Please scan a product and enter quantity.";
+        return;
+      }
+      chemicals.push({ product: lastProductName, quantity, employee });
+      const li = document.createElement("li");
+      li.textContent = `${lastProductName} — ${quantity}`;
+      document.getElementById("listContainer").appendChild(li);
+      document.getElementById("quantity").value = "";
+      document.getElementById("productInfo").innerHTML = "";
+      document.getElementById("confirmInfo").innerHTML = "";
+      document.getElementById("scannerUI").style.display = "none";
+      document.getElementById("startScanBtn").style.display = "flex";
+    }
 
     function submitData() {
-      const submitBtn = document.getElementById("submitBtn");
-      submitBtn.disabled = true;
-      submitBtn.innerText = "Submitting...";
-
-      const user = localStorage.getItem("employeeName") || "Unknown";
-      const quantity = document.getElementById("quantity").value.trim();
-      const barcode = document.getElementById("barcode").value.trim();
-
-      if (!user || !quantity || !barcode) {
-        document.getElementById("result").innerText = "⚠️ Please fill out all fields.";
-        submitBtn.disabled = false;
-        submitBtn.innerText = "Submit";
+      if (chemicals.length === 0) {
+        document.getElementById("result").innerText = "⚠️ Add at least one chemical before submitting.";
+        return;
+      }
+      const scriptURL = "https://script.google.com/macros/s/AKfycbx_Bl4QAbqVSZndyQT97xMBKow-8AjLC3A6oHHbpGAziaIOCi1Mvqqnt9ofYA4vT9gUvA/exec";
+      chemicals.forEach(entry => {
+        const formData = new URLSearchParams();
+        formData.append("employee", entry.employee);
+        formData.append("chemical", entry.product);
+        formData.append("quantity", entry.quantity);
+        fetch(scriptURL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: formData.toString()
+        });
+      });
+      document.getElementById("result").innerText = "✅ Submitted successfully.";
+      document.getElementById("listContainer").innerHTML = "";
+      chemicals.length = 0;
+    }
         return;
       }
 
