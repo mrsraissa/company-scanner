@@ -5,24 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body { font-family: Arial; text-align: center; padding: 20px; }
-    input, button { font-size: 16px; padding: 10px; margin-top: 10px; width: 80%; }
+    input, select, button { font-size: 16px; padding: 10px; margin-top: 10px; width: 80%; }
   </style>
 </head>
 <body>
   <h2>👋 Welcome to Chemical Scanning App</h2>
-  <p>Please enter your name to continue:</p>
+  <p>Please enter your name and choose your language:</p>
+  
   <input type="text" id="username" placeholder="Your name"><br>
-  <button onclick="saveName()">➡️ Enter</button>
+
+  <select id="language">
+    <option value="en">🇺🇸 English</option>
+    <option value="es">🇪🇸 Español</option>
+  </select><br>
+
+  <button onclick="savePreferences()">➡️ Enter</button>
 
   <script>
-    function saveName() {
+    function savePreferences() {
       const name = document.getElementById('username').value.trim();
+      const language = document.getElementById('language').value;
+
       if (!name) {
         alert("Please enter your name.");
         return;
       }
+
       localStorage.setItem('employeeName', name);
-      window.location.href = 'index.html'; // ✅ go to main menu
+      localStorage.setItem('preferredLanguage', language);
+      window.location.href = 'index.html';
     }
 
     // If already logged in, skip to menu
