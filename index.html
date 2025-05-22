@@ -50,16 +50,16 @@
   <h2>📋 Main Menu</h2>
   <p>👤 Logged in as: <span id="displayName"></span></p>
 
-  <button class="menu-button" onclick="location.href='checkout.html'">
-    <span class="material-icons">qr_code</span> Check Out / Registro de salida
+  <button id="btnCheckout" class="menu-button" onclick="location.href='checkout.html'">
+    <span class="material-icons">qr_code</span> 
   </button>
 
-  <button class="menu-button" onclick="location.href='technical-report.html'">
-    <span class="material-icons">description</span> Technical Report / Informe Técnico
+  <button id="btnReport" class="menu-button" onclick="location.href='technical-report.html'">
+    <span class="material-icons">description</span>
   </button>
 
-  <button class="menu-button" onclick="alert('Coming soon')">
-    <span class="material-icons">undo</span> Product Return
+  <button id="btnReturn" class="menu-button" onclick="alert('Coming soon')">
+    <span class="material-icons">undo</span>
   </button>
 
   <button class="menu-button" onclick="logout()">
@@ -68,14 +68,36 @@
 
   <script>
     const name = localStorage.getItem('employeeName');
+    const lang = localStorage.getItem('preferredLanguage') || 'en';
+
     if (!name) {
-      window.location.href = 'login.html'; // fallback redirect
+      window.location.href = 'login.html';
     } else {
       document.getElementById('displayName').innerText = name;
     }
 
+    const translations = {
+      en: {
+        checkout: "Check Out",
+        report: "Technical Report",
+        return: "Product Return"
+      },
+      es: {
+        checkout: "Registro de salida",
+        report: "Informe Técnico",
+        return: "Devolución de producto"
+      }
+    };
+
+    const t = translations[lang];
+
+    document.getElementById('btnCheckout').innerHTML += `${t.checkout} / ${translations.es.checkout}`;
+    document.getElementById('btnReport').innerHTML += `${t.report} / ${translations.es.report}`;
+    document.getElementById('btnReturn').innerHTML += `${t.return} / ${translations.es.return}`;
+
     function logout() {
       localStorage.removeItem('employeeName');
+      localStorage.removeItem('preferredLanguage');
       window.location.href = 'login.html';
     }
   </script>
