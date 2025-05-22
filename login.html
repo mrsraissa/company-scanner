@@ -2,52 +2,71 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Chemical Scanning App Login</title>
+  <title>Chemical Scanning App - Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 40px 20px;
-      background-color: #f0fdf4;
-      color: #065f46;
-    }
-
-    h2 {
-      font-size: 24px;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    p {
-      font-size: 16px;
-      margin-bottom: 20px;
-    }
-
-    input, select, button {
-      font-size: 16px;
-      padding: 12px;
-      margin: 10px 0;
-      width: 90%;
-      max-width: 320px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+    * {
       box-sizing: border-box;
     }
 
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f0fdf4;
+      color: #065f46;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .login-container {
+      background: #ffffff;
+      padding: 30px 24px;
+      border-radius: 16px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .login-container h2 {
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      font-size: 22px;
+      color: #065f46;
+    }
+
+    .login-container p {
+      margin: 0 0 20px;
+      font-size: 15px;
+      color: #444;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 16px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
     select {
-      appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
       background-color: #fff;
       background-image: url('data:image/svg+xml;utf8,<svg fill="%23065846" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
       background-repeat: no-repeat;
       background-position: right 12px center;
       background-size: 16px 16px;
+      appearance: none;
       color: #065f46;
       padding-right: 40px;
     }
@@ -55,15 +74,14 @@
     button {
       background-color: #198450;
       color: white;
-      font-weight: bold;
       border: none;
+      font-weight: bold;
       cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      transition: background-color 0.3s ease;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       gap: 8px;
+      transition: background-color 0.3s ease;
     }
 
     button:hover {
@@ -71,25 +89,26 @@
     }
 
     .material-icons {
-      font-size: 24px;
       vertical-align: middle;
+      font-size: 20px;
     }
   </style>
 </head>
 <body>
-  <h2><span class="material-icons">login</span> Login</h2>
-  <p><span class="material-icons">person</span> Please enter your name and language:</p>
+  <div class="login-container">
+    <h2><span class="material-icons">login</span> Login</h2>
+    <p><span class="material-icons">person</span> Enter your name and language</p>
 
-  <input type="text" id="username" placeholder="Your name"><br>
+    <input type="text" id="username" placeholder="Your name">
+    <select id="language">
+      <option value="en">English</option>
+      <option value="es">Español</option>
+    </select>
 
-  <select id="language">
-    <option value="en">English</option>
-    <option value="es">Español</option>
-  </select><br>
-
-  <button onclick="savePreferences()">
-    <span class="material-icons">arrow_forward</span> Enter
-  </button>
+    <button onclick="savePreferences()">
+      <span class="material-icons">arrow_forward</span> Enter
+    </button>
+  </div>
 
   <script>
     function savePreferences() {
