@@ -30,7 +30,9 @@
   <script>
     function rescanChemical() {
       document.getElementById("quantity").value = "";
-      document.querySelector('.scanner-overlay').style.display = 'block';
+      setTimeout(() => {
+        document.querySelector('.scanner-overlay').style.display = 'block';
+      }, 300);
       document.getElementById('startScanBtn').style.display = 'none';
       document.getElementById('scannerUI').style.display = 'flex';
       document.getElementById("productInfo").innerHTML = "🔍 Scanning...";
@@ -128,7 +130,9 @@
     };
 
     function openScanner() {
-      document.querySelector('.scanner-overlay').style.display = 'block';
+      setTimeout(() => {
+        document.querySelector('.scanner-overlay').style.display = 'block';
+      }, 300);
       document.getElementById('startScanBtn').style.display = 'none';
       document.getElementById('scannerUI').style.display = 'flex';
       
@@ -266,3 +270,4 @@
   </script>
 </body>
 </html>
+
