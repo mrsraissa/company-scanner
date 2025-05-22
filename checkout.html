@@ -38,7 +38,15 @@
         searching: "🔍 Searching ...",
         quantity: "Quantity:",
         add: "Add Chemical",
-        submit: "Submit"
+        submit: "Submit",
+        notFound: "❌ Product not found",
+        errorCheck: "❌ Error checking inventory",
+        errorCamera: "❌ Error starting camera",
+        submitSuccess: "✅ Submitted successfully.",
+        submitEmpty: "Add at least one chemical before submitting.",
+        scanInvalid: "Please scan a valid chemical and enter quantity.",
+        employeeRequired: "Employee name is required.",
+        confirmDelete: "Are you sure you want to remove this chemical?"
       },
       es: {
         title: "Registro de salida",
@@ -46,7 +54,15 @@
         searching: "🔍 Buscando ...",
         quantity: "Cantidad:",
         add: "Agregar químico",
-        submit: "Enviar"
+        submit: "Enviar",
+        notFound: "❌ Producto no encontrado",
+        errorCheck: "❌ Error al verificar el inventario",
+        errorCamera: "❌ Error al iniciar la cámara",
+        submitSuccess: "✅ Enviado con éxito.",
+        submitEmpty: "Agrega al menos un químico antes de enviar.",
+        scanInvalid: "Escanea un químico válido y llena la cantidad.",
+        employeeRequired: "Se requiere el nombre del empleado.",
+        confirmDelete: "¿Estás seguro de eliminar este químico?"
       }
     };
     const t = translations[lang];
@@ -103,6 +119,160 @@
     document.getElementById('quantityLabel').innerText = t.quantity;
     document.getElementById('addLabel').innerText = t.add;
     document.getElementById('submitLabel').innerText = t.submit;
+  </script>
+
+  <script>
+        let codeReader;
+    let lastProductName = "";
+    let lastBarcode = "";
+    const chemicals = [];
+    const MAX_CHEMICALS = 50;
+
+    let previewElem;
+    window.onload = () => {
+      previewElem = document.getElementById('preview');
+      document.querySelector('.scanner-overlay').style.display = 'none';
+    };
+
+    function openScanner() {
+      setTimeout(() => {
+        document.querySelector('.scanner-overlay').style.display = 'block';
+      }, 300);
+      document.getElementById('startScanBtn').style.display = 'none';
+      document.getElementById('scannerUI').style.display = 'flex';
+      
+      document.getElementById("productInfo").innerHTML = "🔍 Searching ...";
+
+      codeReader = new ZXing.BrowserMultiFormatReader();
+      codeReader.decodeOnceFromVideoDevice(null, previewElem)
+        .then(result => {
+          codeReader.reset();
+          const barcode = result.text;
+          lastBarcode = barcode;
+
+          fetch(https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(barcode)})
+            .then(res => res.json())
+            .then(data => {
+              if (data.status === "found") {
+                lastProductName = data.product;
+                document.getElementById("productInfo").innerHTML = ✅ <strong>${lastProductName}</strong><br><button onclick=\"rescanChemical()\" style=\"margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #2E7D32; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;\" onmouseover=\"this.style.backgroundColor='#1b5e20'\" onmouseout=\"this.style.backgroundColor='#2E7D32'\">🔄 Scan Again</button>;
+              } else {
+                lastProductName = "";
+                document.getElementById("productInfo").innerHTML = "❌ Product not found";
+              }
+            })
+            .catch(() => {
+              lastProductName = "";
+              document.getElementById("productInfo").innerHTML = "❌ Error checking inventory";
+            });
+        })
+        .catch(err => {
+          console.error(err);
+          document.getElementById("productInfo").innerHTML = "❌ Error starting camera";
+        });
+    }
+
+    function addChemical() {
+      if (chemicals.length >= MAX_CHEMICALS) {
+        alert("You have reached the maximum of 50 chemicals.");
+        return;
+      }
+      const quantity = document.getElementById("quantity").value.trim();
+      let employee = localStorage.getItem("employeeName");
+      if (!employee) {
+        employee = prompt("Enter your name:");
+        if (employee) {
+          localStorage.setItem("employeeName", employee);
+        } else {
+          alert("Employee name is required.");
+          return;
+        }
+      }
+      if (!lastProductName || !quantity) {
+        alert("Please scan a valid chemical and enter quantity.");
+        return;
+      }
+
+      chemicals.push({ product: lastProductName, quantity, employee, barcode: lastBarcode });
+
+      const li = document.createElement("li");
+      const index = chemicals.length - 1;
+      
+      li.innerHTML = <span>${lastProductName} — ${quantity}</span>
+        <div style="display: flex; gap: 10px;">
+          <button onclick="editChemical(${index})" style="color: blue; background: none; border: none; cursor: pointer;">✏️</button>
+          <button onclick="removeChemical(${index})" 
+          style="color: red; background: none; border: none; cursor: pointer; margin-left: 10px;">
+          ❌
+        </button>;
+      li.style.display = "flex";
+      li.style.justifyContent = "space-between";
+      li.style.alignItems = "center";
+      li.style.padding = "8px 0";
+      li.style.gap = "12px";
+      document.getElementById("listContainer").appendChild(li);
+
+      document.getElementById("scannerUI").style.display = "none";
+      document.querySelector('.scanner-overlay').style.display = 'none';
+      document.getElementById("startScanBtn").style.display = "block";
+      document.getElementById("quantity").value = "";
+      lastProductName = "";
+    }
+
+    function submitData() {
+      if (chemicals.length === 0) {
+        alert("Add at least one chemical before submitting.");
+        return;
+      }
+
+      const scriptURL = "https://script.google.com/macros/s/AKfycbw4Qk4repTdtByqX356QGIX5cRDhDznjRrFOBRFByp3S8dGk1JJd8ZWs96Yt6uW_uO3/exec";
+
+      chemicals.forEach(entry => {
+        const formData = new URLSearchParams();
+        formData.append("employee", entry.employee);
+        formData.append("chemical", entry.product);
+        formData.append("barcode", entry.barcode);
+        formData.append("quantity", entry.quantity);
+
+        fetch(scriptURL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: formData.toString()
+        });
+      });
+
+      document.getElementById("result").innerText = "✅ Submitted successfully.";
+      
+      document.getElementById("listContainer").innerHTML = "";
+      chemicals.length = 0;
+    }
+
+    function editChemical(index) {
+      const item = chemicals[index];
+      document.getElementById("quantity").value = item.quantity;
+      lastProductName = item.product;
+      lastBarcode = item.barcode;
+      document.getElementById("productInfo").innerHTML = ✏️ Editing: <strong>${item.product}</strong>;
+      document.getElementById("scannerUI").style.display = "flex";
+      document.getElementById("startScanBtn").style.display = "none";
+      chemicals.splice(index, 1);
+      const list = document.getElementById("listContainer");
+      list.removeChild(list.childNodes[index]);
+    }
+
+    function removeChemical(index) {
+      const confirmDelete = confirm("Are you sure you want to remove this chemical?");
+      if (!confirmDelete) return;
+      chemicals.splice(index, 1);
+      const list = document.getElementById("listContainer");
+      list.removeChild(list.childNodes[index]);
+    }
+
+    function goBack() {
+      window.location.href = './index.html';
+    }// ADDITIONAL FUNCTIONALITY SCRIPT FROM USER INSERTED HERE
+    // (Your full script starting from let codeReader and all logic was already reviewed)
   </script>
 </body>
 </html>
