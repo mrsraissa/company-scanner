@@ -67,39 +67,42 @@
   </button>
 
   <script>
-    const name = localStorage.getItem('employeeName');
-    const lang = localStorage.getItem('preferredLanguage') || 'en';
+  const name = localStorage.getItem('employeeName');
+  const lang = localStorage.getItem('preferredLanguage') || 'en';
 
-    if (!name) {
-      window.location.href = 'login.html';
-    } else {
-      document.getElementById('displayName').innerText = name;
+  if (!name) {
+    window.location.href = 'login.html';
+  } else {
+    document.getElementById('displayName').innerText = name;
+  }
+
+  const translations = {
+    en: {
+      title: "Main Menu",
+      greeting: "Hi",
+      checkout: "Check Out",
+      report: "Technical Report",
+      return: "Product Return",
+      logout: "Logout"
+    },
+    es: {
+      title: "Menú Principal",
+      greeting: "Hola",
+      checkout: "Registro de salida",
+      report: "Informe Técnico",
+      return: "Devolución de producto",
+      logout: "Cerrar sesión"
     }
+  };
 
-    const translations = {
-      en: {
-        checkout: "Check Out",
-        report: "Technical Report",
-        return: "Product Return"
-      },
-      es: {
-        checkout: "Registro de salida",
-        report: "Informe Técnico",
-        return: "Devolución de producto"
-      }
-    };
+  const t = translations[lang];
 
-    const t = translations[lang];
-
-    document.getElementById('btnCheckout').innerHTML += t.checkout;
-    document.getElementById('btnReport').innerHTML += t.report;
-    document.getElementById('btnReturn').innerHTML += t.return;
-
-    function logout() {
-      localStorage.removeItem('employeeName');
-      localStorage.removeItem('preferredLanguage');
-      window.location.href = 'login.html';
-    }
+  document.querySelector("h2").innerText = `📋 ${t.title}`;
+  document.querySelector("p").innerHTML = `${t.greeting}, <span id="displayName">${name}</span>`;
+  document.getElementById('btnCheckout').innerHTML += t.checkout;
+  document.getElementById('btnReport').innerHTML += t.report;
+  document.getElementById('btnReturn').innerHTML += t.return;
+  document.querySelector("button.menu-button:last-of-type").innerHTML = `<span class="material-icons">logout</span> ${t.logout}`;
   </script>
 </body>
 </html>
