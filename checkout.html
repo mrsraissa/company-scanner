@@ -50,7 +50,7 @@
               if (data.status === "found") {
                 lastProductName = data.product;
                 document.querySelector('.scanner-overlay').style.display = 'none';
-                document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong><br><button onclick=\"rescanChemical()\" style=\"margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #2E7D32; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;\" onmouseover=\"this.style.backgroundColor='#1b5e20'\" onmouseout=\"this.style.backgroundColor='#FB8C00'\">🔄 Scan Again</button>`;
+                document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong><br><button onclick=\"rescanChemical()\" style=\"margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #DC6D18; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;\" onmouseover=\"this.style.backgroundColor='#1b5e20'\" onmouseout=\"this.style.backgroundColor='#FB8C00'\">🔄 Scan Again</button>`;
               } else {
                 lastProductName = "";
                 document.querySelector('.scanner-overlay').style.display = 'none';
