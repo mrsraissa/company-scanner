@@ -136,7 +136,7 @@
     document.getElementById('addButton').addEventListener('click', addChemical);
     document.getElementById('submitBtn').addEventListener('click', submitData);
 
-    function openScanner() {
+   function openScanner() {
       setTimeout(() => {
         document.querySelector('.scanner-overlay').style.display = 'block';
       }, 300);
@@ -156,7 +156,9 @@
             .then(data => {
               if (data.status === "found") {
                 lastProductName = data.product;
-                document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong>`;
+                document.getElementById("productInfo").innerHTML =
+                  `✅ <strong>${lastProductName}</strong><br>
+                  <button onclick=\"rescanChemical()\" style=\"margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #2E7D32; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;\" onmouseover=\"this.style.backgroundColor='#1b5e20'\" onmouseout=\"this.style.backgroundColor='#2E7D32'\">🔄 Scan Again</button>`;
               } else {
                 lastProductName = "";
                 document.getElementById("productInfo").innerHTML = t.notFound;
@@ -172,7 +174,6 @@
           document.getElementById("productInfo").innerHTML = t.errorCamera;
         });
     }
-
     function addChemical() {
       const quantity = document.getElementById("quantity").value.trim();
       let employee = localStorage.getItem("employeeName") || prompt(t.employeeRequired);
