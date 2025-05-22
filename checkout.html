@@ -27,41 +27,43 @@
       100% { box-shadow: 0 0 0 0 rgba(50, 205, 50, 0); }
     }
   </style>
-  <script>
-    const translations = {
-      en: {
-        header: "Check Out",
-        scan: "Scan Chemical",
-        submit: "Submit",
-        searching: "🔍 Searching ...",
-        quantity: "Quantity:",
-        add: "Add Chemical"
-      },
-      es: {
-        header: "Registro de salida",
-        scan: "Escanear químico",
-        submit: "Enviar",
-        searching: "🔍 Buscando...",
-        quantity: "Cantidad:",
-        add: "Agregar químico"
-      }
-    };
-    const lang = localStorage.getItem('preferredLanguage') || 'en';
-    const t = translations[lang];
-  </script>
 </head>
 <body>
+  <script>
+    const lang = localStorage.getItem('preferredLanguage') || 'en';
+    const translations = {
+      en: {
+        title: "Check Out",
+        scan: "Scan Chemical",
+        searching: "🔍 Searching ...",
+        quantity: "Quantity:",
+        add: "Add Chemical",
+        submit: "Submit"
+      },
+      es: {
+        title: "Registro de salida",
+        scan: "Escanear químico",
+        searching: "🔍 Buscando ...",
+        quantity: "Cantidad:",
+        add: "Agregar químico",
+        submit: "Enviar"
+      }
+    };
+    const t = translations[lang];
+    document.title = t.title;
+  </script>
+
   <div class="page-wrapper">
     <header class="header">
       <div class="icon-title">
         <span class="material-icons">description</span>
-        <h2 id="headerText" style="font-size: 18px; font-weight: normal; margin: 0;">Check Out</h2>
+        <h2 style="font-size: 18px; font-weight: normal; margin: 0;" id="pageTitle"></h2>
       </div>
     </header>
 
     <main class="content" style="flex: 1; display: flex; flex-direction: column; align-items: center; padding: 80px 20px 120px; overflow-y: visible; position: relative;">
       <button id="startScanBtn" onclick="openScanner()" style="padding: 40px; font-size: 24px; border-radius: 12px; background-color: #DC6D18; color: black; border: none; box-shadow: 0 4px 8px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px;">
-        <span class="material-icons">qr_code_scanner</span> <span id="scanText">Scan Chemical</span>
+        <span class="material-icons">qr_code_scanner</span> <span id="scanLabel"></span>
       </button>
 
       <div id="scannerUI" style="display:none">
@@ -72,11 +74,11 @@
 
         <div id="productInfo" style="font-size: 2em; font-weight: bold; text-align: center; color: #004d00;">&nbsp;</div>
 
-        <label for="quantity" id="quantityLabel">Quantity:</label>
+        <label for="quantity" id="quantityLabel"></label>
         <input type="number" id="quantity" required>
 
         <button onclick="addChemical()" class="action-button">
-          <span class="material-icons">add_circle</span> <span id="addText">Add Chemical</span>
+          <span class="material-icons">add_circle</span> <span id="addLabel"></span>
         </button>
       </div>
 
@@ -85,7 +87,7 @@
       </div>
 
       <button onclick="submitData()" class="action-button" style="margin-top: 20px; align-self: center; padding: 20px 30px; font-size: 20px; border-radius: 12px; background-color: #DC6D18; color: white; display: flex; align-items: center; gap: 10px;">
-        <span class="material-icons">send</span> <span id="submitText">Submit</span>
+        <span class="material-icons">send</span> <span id="submitLabel"></span>
       </button>
       <div id="result"></div>
     </main>
@@ -96,40 +98,11 @@
   </div>
 
   <script>
-    document.getElementById("headerText").innerText = t.header;
-    document.getElementById("scanText").innerText = t.scan;
-    document.getElementById("submitText").innerText = t.submit;
-    document.getElementById("quantityLabel").innerText = t.quantity;
-    document.getElementById("addText").innerText = t.add;
-
-    let codeReader;
-    let previewElem;
-
-    window.onload = () => {
-      previewElem = document.getElementById('preview');
-    };
-
-    function openScanner() {
-      document.getElementById('startScanBtn').style.display = 'none';
-      document.getElementById('scannerUI').style.display = 'flex';
-      document.getElementById('productInfo').innerText = t.searching;
-
-      codeReader = new ZXing.BrowserMultiFormatReader();
-      codeReader.decodeOnceFromVideoDevice(undefined, previewElem)
-        .then(result => {
-          codeReader.reset();
-          const barcode = result.text;
-          document.getElementById("productInfo").innerHTML = `✅ <strong>${barcode}</strong>`;
-        })
-        .catch(err => {
-          console.error(err);
-          document.getElementById("productInfo").innerText = "❌ Error starting camera";
-        });
-    }
-
-    function goBack() {
-      window.location.href = 'index.html';
-    }
+    document.getElementById('pageTitle').innerText = t.title;
+    document.getElementById('scanLabel').innerText = t.scan;
+    document.getElementById('quantityLabel').innerText = t.quantity;
+    document.getElementById('addLabel').innerText = t.add;
+    document.getElementById('submitLabel').innerText = t.submit;
   </script>
 </body>
 </html>
