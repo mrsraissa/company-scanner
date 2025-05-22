@@ -38,7 +38,7 @@
     </header>
 
     <main class="content" style="flex: 1; display: flex; flex-direction: column; align-items: center; padding: 80px 20px 120px; overflow-y: visible; position: relative;">
-      <button id="startScanBtn" onclick="openScanner()" type="button" style="padding: 40px; font-size: 24px; border-radius: 12px; background-color: #66BB6A; color: black; border: none; box-shadow: 0 4px 8px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px;">
+      <button id="startScanBtn" type="button" onclick="openScanner()" style="position: fixed; top: 80px; z-index: 12; padding: 40px; font-size: 24px; border-radius: 12px; background-color: #66BB6A; color: black; border: none; box-shadow: 0 4px 8px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px;">
         <span class="material-icons">qr_code_scanner</span> Scan Chemical
       </button>
 
@@ -58,7 +58,7 @@
         </button>
       </div>
 
-      <div id="chemicalList" style="flex-grow: 1; max-height: 250px; overflow-y: auto; width: 100%;">
+      <div id="chemicalList" style="flex-grow: 1; max-height: 250px; overflow-y: auto; width: 100%; background-color: rgba(255, 255, 255, 0.75); border-radius: 12px; padding: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
         <ul id="listContainer"></ul>
       </div>
 
@@ -172,7 +172,7 @@
         return;
       }
 
-      const scriptURL = "https://script.google.com/macros/s/AKfycbw4Qk4repTdtByqX356QGIX5cRDhDznjRrFOBRFByp3S8dGk1JJd8ZWs96Yt6uW_uO3/exec";
+      const scriptURL = "https://script.google.com/macros/s/AKfycbx_Bl4QAbqVSZndyQT97xMBKow-8AjLC3A6oHHbpGAziaIOCi1Mvqqnt9ofYA4vT9gUvA/exec";
 
       chemicals.forEach(entry => {
         const formData = new URLSearchParams();
@@ -217,7 +217,7 @@
     }
 
     function goBack() {
-      window.location.href = 'index.html';
+      window.location.href = './index.html';
     }
   </script>
 </body>
