@@ -1,27 +1,27 @@
-/* Base reset and layout */
+/* Reset and layout base */
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
   font-family: Arial, sans-serif;
   background-color: #FFE0B2; /* Light orange background */
-  color: #fff;
+  color: #333;
 }
 
-/* Page structure */
+/* Layout container */
 .page-wrapper {
   display: flex;
   flex-direction: column;
   height: 100vh;
 }
 
-/* Header */
+/* Header styling */
 .header {
   position: fixed;
   top: 0;
   width: 100%;
   height: 60px;
-  background-color: #FB8C00; /* Orange header */
+  background-color: #FB8C00; /* Main orange */
   color: white;
   display: flex;
   align-items: center;
@@ -46,7 +46,7 @@ html, body {
   bottom: 0;
   width: 100%;
   height: 60px;
-  background-color: #FB8C00; /* Orange footer */
+  background-color: #FB8C00; /* Match header */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -64,93 +64,121 @@ html, body {
   color: black;
 }
 
-/* Main content */
+/* Main content area */
 .content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  min-height: calc(100vh - 120px);
-  padding: 0 16px;
+  padding-top: 80px; /* header */
+  padding-bottom: 80px; /* footer */
+  overflow-y: auto;
 }
 
-/* Buttons */
-button,
-.action-button {
-  font-size: 18px;
+/* Scan button */
+#startScanBtn {
+  background-color: #FFA726; /* Light orange */
   border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: transform 0.2s ease;
+  border-radius: 16px;
+  padding: 30px 40px;
+  margin: 20px 0;
+  font-size: 18px;
+  color: black;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 24px;
-  margin-top: 10px;
-}
-
-.action-button {
-  background-color: #FB8C00; /* Orange button */
-  color: white;
-  width: 100%;
-  max-width: 300px;
-  justify-content: center;
-}
-
-.action-button.secondary {
-  background-color: white;
-  color: #FB8C00;
-  border: 2px solid #FB8C00;
-}
-
-#startScanBtn {
-  background-color: #FFA726; /* Slightly lighter orange */
-  color: black;
-  font-size: 24px;
-  padding: 40px;
   box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
-#startScanBtn:hover,
-.action-button:hover {
+#startScanBtn:hover {
   transform: scale(1.05);
 }
 
-/* Scanner UI */
-.container,
+/* Scanner UI box */
 #scannerUI {
   display: none;
   flex-direction: column;
   gap: 10px;
-  background-color: #fff3e0; /* Very light orange */
+  background-color: #FFF3E0; /* Very light orange */
   color: #000;
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-  width: 100%;
+  width: 90%;
   max-width: 400px;
 }
 
 #productInfo {
-  font-size: 2.5em;
+  font-size: 1.6em;
   font-weight: bold;
-  margin: 20px 0;
+  margin-top: 10px;
   text-align: center;
-  color: #E65100; /* Dark orange for contrast */
+  color: #E65100; /* Strong dark orange */
 }
 
+/* Input styling */
 input, select {
   font-size: 16px;
   padding: 10px;
   border-radius: 8px;
   border: 1px solid #bbb;
   width: 100%;
-  box-sizing: border-box;
   margin-bottom: 10px;
+  box-sizing: border-box;
 }
 
-video#preview {
+/* Buttons */
+.action-button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background-color: #FB8C00;
+  color: white;
+  font-size: 18px;
+  margin-top: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.action-button:hover {
+  background-color: #EF6C00;
+}
+
+/* Chemical list section */
+#chemicalList {
+  margin-top: 20px;
+  width: 90%;
+  max-width: 400px;
+}
+
+#chemicalList h3 {
+  font-size: 20px;
+  text-align: center;
+  color: #FB8C00;
+}
+
+#listContainer {
+  list-style: none;
+  padding: 0;
+  color: #333;
+}
+
+#listContainer li {
+  padding: 6px 10px;
+  margin: 4px 0;
+  background-color: rgba(255, 152, 0, 0.1); /* Soft orange shade */
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+/* Video preview */
+#preview {
   width: 100%;
   max-width: 400px;
   border-radius: 12px;
