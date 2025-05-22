@@ -65,7 +65,7 @@
       document.getElementById("productInfo").innerHTML = "🔍 Searching for chemical...";
 
       codeReader = new ZXing.BrowserMultiFormatReader();
-      codeReader.decodeOnceFromVideoDevice(undefined, previewElem)
+      codeReader.decodeOnceFromVideoDevice(null, previewElem)
         .then(result => {
           codeReader.reset();
           const barcode = result.text;
