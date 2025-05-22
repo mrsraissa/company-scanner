@@ -7,26 +7,26 @@
   <script src="https://unpkg.com/@zxing/library@latest"></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="styles/checkout.css">
-<style>
-  .scanner-overlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 60%;
-    height: 30%;
-    transform: translate(-50%, -50%);
-    border: 3px solid limegreen;
-    border-radius: 8px;
-    pointer-events: none;
-    animation: pulse-border 1s infinite;
-  }
+  <style>
+    .scanner-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 60%;
+      height: 30%;
+      transform: translate(-50%, -50%);
+      border: 3px solid limegreen;
+      border-radius: 8px;
+      pointer-events: none;
+      animation: pulse-border 1s infinite;
+    }
 
-  @keyframes pulse-border {
-    0% { box-shadow: 0 0 0 0 rgba(50, 205, 50, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(50, 205, 50, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(50, 205, 50, 0); }
-  }
-</style>
+    @keyframes pulse-border {
+      0% { box-shadow: 0 0 0 0 rgba(50, 205, 50, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(50, 205, 50, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(50, 205, 50, 0); }
+    }
+  </style>
 </head>
 <body>
   <div class="page-wrapper">
@@ -38,42 +38,34 @@
     </header>
 
     <main class="content" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: calc(100vh - 120px);">
-      <button id="startScanBtn" onclick="openScanner()" type="button">
+      <button id="startScanBtn" onclick="openScanner()" type="button" style="padding: 40px; font-size: 24px; border-radius: 12px; background-color: #66BB6A; color: black; border: none; box-shadow: 0 4px 8px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px;">
         <span class="material-icons">qr_code_scanner</span> Scan Chemical
       </button>
 
-      <div class="container" id="scannerUI" style="display:none; align-items: center;">
+      <div id="scannerUI" style="display:none">
         <div style="position: relative; width: 100%; max-width: 400px;">
-  <video id="preview" playsinline style="width: 100%; border-radius: 12px;"></video>
-  <div class="scanner-overlay"></div>
-</div>
+          <video id="preview" playsinline style="width: 100%; border-radius: 12px;"></video>
+          <div class="scanner-overlay"></div>
+        </div>
 
-        <div id="productInfo" style="font-size: 1.6em; font-weight: bold; margin: 20px 0; text-align: center; color: #004d00;">&nbsp;</div>
+        <div id="productInfo" style="font-size: 2.5em; font-weight: bold; margin: 20px 0; text-align: center; color: #004d00;">&nbsp;</div>
 
-        <label><span class="material-icons">edit</span> Quantity:</label>
-        <input type="number" id="quantity" oninput="confirmSubmission()" style="margin-bottom: 8px;">
-
-        <div id="confirmInfo" style="text-align: center; font-size: 1.2em; margin-top: 10px; color: #004d00; font-weight: 500;"></div>
-
-                <button onclick="openScanner()" class="action-button secondary">
-          <span class="material-icons">autorenew</span>
-          Scan Again
-        </button>
-
-        <ul id="listContainer" style="margin-top: 20px; list-style: none; padding: 0; color: #fff;"></ul>
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" required>
 
         <button onclick="addChemical()" class="action-button">
-          <span class="material-icons">add_circle</span>
-          Add Chemical
+          <span class="material-icons">add_circle</span> Add Chemical
         </button>
-
-        <button onclick="submitData()" class="action-button" style="margin-top: 20px; align-self: center; padding: 20px 30px; font-size: 20px; border-radius: 12px; background-color: #388E3C; color: white; display: flex; align-items: center; gap: 10px;">
-          <span class="material-icons">send</span>
-          Submit All
-        </button>
-
-        <div id="result"></div>
       </div>
+
+      <div id="chemicalList">
+        <ul id="listContainer"></ul>
+      </div>
+
+      <button onclick="submitData()" class="action-button" style="margin-top: 20px; align-self: center; padding: 20px 30px; font-size: 20px; border-radius: 12px; background-color: #388E3C; color: white; display: flex; align-items: center; gap: 10px;">
+        <span class="material-icons">send</span> Submit All
+      </button>
+      <div id="result"></div>
     </main>
 
     <footer class="bottom-bar">
@@ -85,20 +77,16 @@
     let codeReader;
     let lastProductName = "";
     const chemicals = [];
-    function removeChemical(index) {
-      chemicals.splice(index, 1);
-      const list = document.getElementById("listContainer");
-      list.removeChild(list.childNodes[index]);
-    }
-    let previewElem;
+    const MAX_CHEMICALS = 50;
 
+    let previewElem;
     window.onload = () => {
       previewElem = document.getElementById('preview');
     };
 
     function openScanner() {
       document.getElementById('startScanBtn').style.display = 'none';
-      document.getElementById('scannerUI').style.display = 'flex';
+      document.getElementById('scannerUI').style.display = 'block';
       document.getElementById("productInfo").innerHTML = "🔍 Searching for chemical...";
 
       codeReader = new ZXing.BrowserMultiFormatReader();
@@ -106,7 +94,7 @@
         .then(result => {
           codeReader.reset();
           const barcode = result.text;
-          
+
           fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(barcode)}`)
             .then(res => res.json())
             .then(data => {
@@ -114,10 +102,12 @@
                 lastProductName = data.product;
                 document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong>`;
               } else {
+                lastProductName = "";
                 document.getElementById("productInfo").innerHTML = "❌ Product not found";
               }
             })
             .catch(() => {
+              lastProductName = "";
               document.getElementById("productInfo").innerHTML = "❌ Error checking inventory";
             });
         })
@@ -127,49 +117,45 @@
         });
     }
 
-    function confirmSubmission() {
-  const quantity = document.getElementById("quantity").value.trim();
-  if (!lastProductName || !quantity) {
-    document.getElementById("result").innerText = "⚠️ Please scan a product and enter quantity.";
-    return;
-  }
-  document.getElementById("confirmInfo").innerHTML = `📋 Confirm: <strong>${lastProductName}</strong> — Qty: <strong>${quantity}</strong>`;
-}
-
     function addChemical() {
-      if (chemicals.length >= 50) {
-        alert("You’ve reached the 50 chemical limit.");
+      if (chemicals.length >= MAX_CHEMICALS) {
+        alert("You have reached the maximum of 50 chemicals.");
         return;
       }
       const quantity = document.getElementById("quantity").value.trim();
       const employee = localStorage.getItem("employeeName") || "Unknown";
       if (!lastProductName || !quantity) {
-        document.getElementById("result").innerText = "⚠️ Please scan a product and enter quantity.";
+        alert("Please scan a valid chemical and enter quantity.");
         return;
       }
+
       chemicals.push({ product: lastProductName, quantity, employee });
+
       const li = document.createElement("li");
       const index = chemicals.length - 1;
       li.innerHTML = `${lastProductName} — ${quantity} <button onclick="removeChemical(${index})" style="margin-left: 10px; color: red; background: none; border: none; cursor: pointer;">❌</button>`;
       document.getElementById("listContainer").appendChild(li);
-      document.getElementById("quantity").value = "";
-      document.getElementById("productInfo").innerHTML = "";
-      document.getElementById("confirmInfo").innerHTML = "";
+
       document.getElementById("scannerUI").style.display = "none";
-      document.getElementById("startScanBtn").style.display = "flex";
+      document.getElementById("startScanBtn").style.display = "block";
+      document.getElementById("quantity").value = "";
+      lastProductName = "";
     }
 
     function submitData() {
       if (chemicals.length === 0) {
-        document.getElementById("result").innerText = "⚠️ Add at least one chemical before submitting.";
+        alert("Add at least one chemical before submitting.");
         return;
       }
+
       const scriptURL = "https://script.google.com/macros/s/AKfycbx_Bl4QAbqVSZndyQT97xMBKow-8AjLC3A6oHHbpGAziaIOCi1Mvqqnt9ofYA4vT9gUvA/exec";
+
       chemicals.forEach(entry => {
         const formData = new URLSearchParams();
         formData.append("employee", entry.employee);
         formData.append("chemical", entry.product);
         formData.append("quantity", entry.quantity);
+
         fetch(scriptURL, {
           method: "POST",
           mode: "no-cors",
@@ -177,11 +163,20 @@
           body: formData.toString()
         });
       });
+
       document.getElementById("result").innerText = "✅ Submitted successfully.";
       document.getElementById("listContainer").innerHTML = "";
       chemicals.length = 0;
     }
-        
+
+    function removeChemical(index) {
+      const confirmDelete = confirm("Are you sure you want to remove this chemical?");
+      if (!confirmDelete) return;
+      chemicals.splice(index, 1);
+      const list = document.getElementById("listContainer");
+      list.removeChild(list.childNodes[index]);
+    }
+
     function goBack() {
       window.location.href = 'index.html';
     }
