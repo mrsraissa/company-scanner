@@ -9,18 +9,18 @@
   <link rel="stylesheet" href="styles/technical-report.css">
   <style>
     .scanner-overlay {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 60%;
-      height: 30%;
-      transform: translate(-50%, -50%);
-      border: 3px solid limegreen;
-      border-radius: 8px;
-      pointer-events: none;
-      animation: pulse-border 1s infinite;
-    }
-
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  height: 30%;
+  transform: translate(-50%, -50%);
+  border: 3px solid limegreen;
+  border-radius: 8px;
+  pointer-events: none;
+  animation: pulse-border 1s infinite;
+  display: none !important;
+}
     @keyframes pulse-border {
       0% { box-shadow: 0 0 0 0 rgba(50, 205, 50, 0.7); }
       70% { box-shadow: 0 0 0 10px rgba(50, 205, 50, 0); }
@@ -47,19 +47,23 @@
             .then(data => {
               if (data.status === "found") {
                 lastProductName = data.product;
+                document.querySelector('.scanner-overlay').style.display = 'none';
                 document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong><br><button onclick=\"rescanChemical()\" style=\"margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #2E7D32; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;\" onmouseover=\"this.style.backgroundColor='#1b5e20'\" onmouseout=\"this.style.backgroundColor='#2E7D32'\">🔄 Scan Again</button>`;
               } else {
                 lastProductName = "";
+                document.querySelector('.scanner-overlay').style.display = 'none';
                 document.getElementById("productInfo").innerHTML = "❌ Product not found";
               }
             })
             .catch(() => {
               lastProductName = "";
+              document.querySelector('.scanner-overlay').style.display = 'none';
               document.getElementById("productInfo").innerHTML = "❌ Error checking inventory";
             });
         })
         .catch(err => {
           console.error(err);
+          document.querySelector('.scanner-overlay').style.display = 'none';
           document.getElementById("productInfo").innerHTML = "❌ Error starting camera";
         });
     }
@@ -82,7 +86,7 @@
       <div id="scannerUI" style="display:none">
         <div style="position: relative; width: 100%; max-width: 400px;">
           <video id="preview" playsinline style="width: 100%; border-radius: 12px;"></video>
-          <div class="scanner-overlay" style="display: none;"></div>
+          <div class="scanner-overlay" style="display: none !important;"></div>
         </div>
 
         <div id="productInfo" style="font-size: 2em; font-weight: bold; text-align: center; color: #004d00;">&nbsp;</div>
@@ -120,6 +124,7 @@
     let previewElem;
     window.onload = () => {
       previewElem = document.getElementById('preview');
+      document.querySelector('.scanner-overlay').style.display = 'none';
     };
 
     function openScanner() {
