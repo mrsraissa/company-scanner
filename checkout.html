@@ -18,7 +18,7 @@
     </header>
 
     <main class="content" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: calc(100vh - 120px);">
-      <button id="startScanBtn" onclick="openScanner()" style="padding: 40px; font-size: 24px; border-radius: 12px; background-color: #66BB6A; color: black; border: none; box-shadow: 0 4px 8px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px;">
+      <button id="startScanBtn" onclick="openScanner()" type="button">
         <span class="material-icons">qr_code_scanner</span> Scan Chemical
       </button>
 
@@ -58,7 +58,7 @@
     </main>
 
     <footer class="bottom-bar">
-      <button onclick="goBack()"><span class="material-icons">home</span></button>
+      <button type="button" onclick="goBack()"><span class="material-icons">home</span></button>
     </footer>
   </div>
 
@@ -66,6 +66,11 @@
     let codeReader;
     let lastProductName = "";
     const chemicals = [];
+    function removeChemical(index) {
+      chemicals.splice(index, 1);
+      const list = document.getElementById("listContainer");
+      list.removeChild(list.childNodes[index]);
+    }
     let previewElem;
 
     window.onload = () => {
@@ -123,7 +128,8 @@
       }
       chemicals.push({ product: lastProductName, quantity, employee });
       const li = document.createElement("li");
-      li.textContent = `${lastProductName} — ${quantity}`;
+      const index = chemicals.length - 1;
+      li.innerHTML = `${lastProductName} — ${quantity} <button onclick="removeChemical(${index})" style="margin-left: 10px; color: red; background: none; border: none; cursor: pointer;">❌</button>`;
       document.getElementById("listContainer").appendChild(li);
       document.getElementById("quantity").value = "";
       document.getElementById("productInfo").innerHTML = "";
