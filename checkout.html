@@ -4,7 +4,12 @@
   <meta charset="UTF-8">
   <title>Check Out / Registro de salida</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://unpkg.com/@zxing/library@latest"></script>
+  <script src="https://unpkg.com/@zxing/library@latest">
+    function clearAndRescan() {
+      document.getElementById("quantity").value = "";
+      openScanner();
+    }
+  </script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="styles/technical-report.css">
   <style>
@@ -58,7 +63,7 @@
         </button>
       </div>
 
-      <div id="chemicalList">
+      <div id="chemicalList" style="max-width: 100%; background: rgba(255, 255, 255, 0.85); padding: 12px; border-radius: 10px; margin-top: 16px; overflow-x: auto;">
         <ul id="listContainer"></ul>
       </div>
 
@@ -103,11 +108,12 @@
             .then(data => {
               if (data.status === "found") {
                 lastProductName = data.product;
-                document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong>`;
-              } else {
+                $1
+                document.getElementById("productInfo").innerHTML += `<br><button onclick=\"clearAndRescan()\" style=\"margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #2E7D32; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;\" onmouseover=\"this.style.backgroundColor='#1b5e20'\" onmouseout=\"this.style.backgroundColor='#2E7D32'\">🔄 Scan Again</button>`;
+            } else {
                 lastProductName = "";
-                document.getElementById("productInfo").innerHTML = "❌ Product not found";
-              }
+                document.getElementById("productInfo").innerHTML = `❌ Product not found<br><button onclick=\"openScanner()\" style=\"margin-top: 10px; padding: 6px 12px; font-size: 14px; border: none; border-radius: 6px; background-color: #ccc; cursor: pointer;\">Try Again</button>`;
+            }
             })
             .catch(() => {
               lastProductName = "";
