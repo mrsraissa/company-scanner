@@ -245,7 +245,10 @@ function goBack() {
   if (localStorage.getItem('cameraAllowed') === 'true') {
     navigator.permissions?.query({ name: 'camera' }).then(result => {
       if (result.state === 'granted') {
-        openScanner(); // 👈 your existing function
+        setTimeout(() => {
+          previewElem = document.getElementById('preview');
+          if (previewElem) openScanner();
+        }, 200); // slight delay to ensure DOM is ready
       } else if (result.state === 'denied') {
         const warn = document.createElement('div');
         warn.innerText = '📵 Camera access is blocked. Please allow it in your browser settings.';
