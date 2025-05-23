@@ -44,7 +44,8 @@
         submitEmpty: "Add at least one chemical before submitting.",
         scanInvalid: "Please scan a valid chemical and enter quantity.",
         employeeRequired: "Employee name is required.",
-        confirmDelete: "Are you sure you want to remove this chemical?"
+        confirmDelete: "Are you sure you want to remove this chemical?",
+        scanAgain: "🔄 Scan Again"
       },
       es: {
         title: "Registro de salida",
@@ -60,7 +61,8 @@
         submitEmpty: "Agrega al menos un químico antes de enviar.",
         scanInvalid: "Escanea un químico válido y llena la cantidad.",
         employeeRequired: "Se requiere el nombre del empleado.",
-        confirmDelete: "¿Estás seguro de eliminar este químico?"
+        confirmDelete: "¿Estás seguro de eliminar este químico?",
+        scanAgain: "🔄 Escanear nuevamente"
       }
     };
     const t = translations[lang];
@@ -73,7 +75,7 @@
       }, 300);
       document.getElementById('startScanBtn').style.display = 'none';
       document.getElementById('scannerUI').style.display = 'flex';
-      document.getElementById("productInfo").innerHTML = "🔍 Scanning...";
+      document.getElementById("productInfo").innerHTML = t.searching;
 
       codeReader = new ZXing.BrowserMultiFormatReader();
       codeReader.decodeOnceFromVideoDevice(null, previewElem)
@@ -88,23 +90,23 @@
               if (data.status === "found") {
                 lastProductName = data.product;
                 document.querySelector('.scanner-overlay').style.display = 'none';
-                document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong><br><button onclick=\"rescanChemical()\" style=\"margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #DC6D18; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;\" onmouseover=\"this.style.backgroundColor='#1b5e20'\" onmouseout=\"this.style.backgroundColor='#FB8C00'\">🔄 Scan Again</button>`;
+                document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong><br><button onclick=\"rescanChemical()\" style=\"margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #DC6D18; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;\" onmouseover=\"this.style.backgroundColor='#1b5e20'\" onmouseout=\"this.style.backgroundColor='#FB8C00'\">${t.scanAgain}</button>`;
               } else {
                 lastProductName = "";
                 document.querySelector('.scanner-overlay').style.display = 'none';
-                document.getElementById("productInfo").innerHTML = "❌ Product not found";
+                document.getElementById("productInfo").innerHTML = `${t.notFound}<br><button onclick=\"rescanChemical()\" style=\"margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #DC6D18; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;\" onmouseover=\"this.style.backgroundColor='#1b5e20'\" onmouseout=\"this.style.backgroundColor='#FB8C00'\">${t.scanAgain}</button>`;
               }
             })
             .catch(() => {
               lastProductName = "";
               document.querySelector('.scanner-overlay').style.display = 'none';
-              document.getElementById("productInfo").innerHTML = "❌ Error checking inventory";
+              document.getElementById("productInfo").innerHTML = `${t.errorCheck}<br><button onclick=\"rescanChemical()\" style=\"margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #DC6D18; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;\" onmouseover=\"this.style.backgroundColor='#1b5e20'\" onmouseout=\"this.style.backgroundColor='#FB8C00'\">${t.scanAgain}</button>`;
             });
         })
         .catch(err => {
           console.error(err);
           document.querySelector('.scanner-overlay').style.display = 'none';
-          document.getElementById("productInfo").innerHTML = "❌ Error starting camera";
+          document.getElementById("productInfo").innerHTML = `${t.errorCamera}<br><button onclick=\"rescanChemical()\" style=\"margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #DC6D18; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;\" onmouseover=\"this.style.backgroundColor='#1b5e20'\" onmouseout=\"this.style.backgroundColor='#FB8C00'\">${t.scanAgain}</button>`;
         });
     }
   </script>
