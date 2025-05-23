@@ -224,6 +224,13 @@
       </button>`;
   }
 }
+function goBack() {
+  if (currentStream) {
+    currentStream.getTracks().forEach(track => track.stop());
+  }
+  window.location.href = './index.html';
+}
+  
     window.onload = () => {
       previewElem = document.getElementById('preview');
       document.querySelector('.scanner-overlay').style.display = 'none';
@@ -427,7 +434,7 @@
     function goBack() {
       window.location.href = './index.html';
     }
-    function goBack() {
+  function goBack() {
   if (currentStream) {
     currentStream.getTracks().forEach(track => track.stop());
   }
