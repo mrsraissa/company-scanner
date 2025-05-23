@@ -128,6 +128,35 @@
     if (localStorage.getItem('employeeName')) {
       window.location.href = 'index.html';
     }
-  </script>
+async function savePreferences() {
+    const name = document.getElementById('username').value.trim();
+    const language = document.getElementById('language').value;
+
+    if (!name) {
+      alert("Please enter your name.");
+      return;
+    }
+
+    localStorage.setItem('employeeName', name);
+    localStorage.setItem('preferredLanguage', language);
+
+    // Try requesting camera access
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      stream.getTracks().forEach(track => track.stop()); // Immediately stop camera
+      console.log("✅ Camera permission granted");
+    } catch (err) {
+      console.warn("⚠️ Camera permission denied or error:", err);
+      alert("Please allow camera access when prompted so you can scan barcodes.");
+    }
+
+    window.location.href = 'index.html';
+  }
+
+  // Skip login if already logged in
+  if (localStorage.getItem('employeeName')) {
+    window.location.href = 'index.html';
+  }
+</script>
 </body>
 </html>
