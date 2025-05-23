@@ -44,14 +44,42 @@
       </button>
 
       <div id="scannerUI" style="display:none">
-        <div style="position: relative; width: 100%; max-width: 400px;">
-          <video id="preview" playsinline style="width: 100%; border-radius: 12px;"></video>
-          <div class="scanner-overlay"></div>
-        </div>
+     <div style="position: relative; width: 100%; max-width: 400px;">
+  <video id="preview" playsinline style="width: 100%; border-radius: 12px;"></video>
+  <div class="scanner-overlay"></div>
 
-        <div style="display: flex; gap: 10px; margin-top: 10px;">
-          <button onclick="toggleFlash()" style="padding: 8px 14px; background: #37474F; color: white; border: none; border-radius: 6px;">🔦 Flash</button>
-          
+  <!-- Flash Button (top-right) -->
+  <button onclick="toggleFlash()" style="
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #FFD600;
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
+    🔦
+  </button>
+
+  <!-- Close Button (top-left) -->
+  <button onclick="closeScanner()" style="
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 10px;
+    background: rgba(183, 28, 28, 0.85);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
+    ❌
+  </button>
+         
         </div>
 
         <div id="productInfo" style="font-size: 2em; font-weight: bold; text-align: center; color: #004d00;">&nbsp;</div>
