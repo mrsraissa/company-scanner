@@ -33,7 +33,7 @@
     <header class="header">
       <div class="icon-title">
         <span class="material-icons">description</span>
-        <h2 style="font-size: 18px; font-weight: normal; margin: 0;">Check Out / Registro de salida</h2>
+        <h2 style="font-size: 18px; font-weight: normal; margin: 0;">Check Out </h2>
       </div>
     </header>
 
@@ -135,45 +135,42 @@
       document.querySelector('.scanner-overlay').style.display = 'none';
     });
 
-    function openScanner() {
-      setTimeout(() => {
-        document.querySelector('.scanner-overlay').style.display = 'block';
-      }, 300);
-      document.getElementById('startScanBtn').style.display = 'none';
-      document.getElementById('scannerUI').style.display = 'flex';
-      document.getElementById("productInfo").innerHTML = t.searching;
+   function openScanner() {
+  setTimeout(() => {
+    document.querySelector('.scanner-overlay').style.display = 'block';
+  }, 300);
+  document.getElementById('startScanBtn').style.display = 'none';
+  document.getElementById('scannerUI').style.display = 'flex';
+  document.getElementById("productInfo").innerHTML = t.searching;
 
-      codeReader = new ZXing.BrowserMultiFormatReader();
-      codeReader.decodeOnceFromVideoDevice(null, previewElem)
-        .then(result => {
-          codeReader.reset();
-          const barcode = result.text;
-          lastBarcode = barcode;
+  codeReader = new ZXing.BrowserMultiFormatReader();
+  codeReader.decodeOnceFromVideoDevice(null, previewElem)
+    .then(result => {
+      codeReader.reset();
+      const barcode = result.text;
+      lastBarcode = barcode;
 
-          fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(barcode)}`)
-            .then(res => res.json())
-            .then(data => {
-              if (data.status === "found") {
-                lastProductName = data.product;
-                document.getElementById("productInfo").innerHTML =
-                  `✅ <strong>${lastProductName}</strong><br>
-                   <button onclick="rescanChemical()" style="margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #2E7D32; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;"
-                   onmouseover="this.style.backgroundColor='#1b5e20'" onmouseout="this.style.backgroundColor='#2E7D32'">${t.scanAgain}</button>`;
-              } else {
-                lastProductName = "";
-                document.getElementById("productInfo").innerHTML = t.notFound;
-              }
-            })
-            .catch(() => {
-              lastProductName = "";
-              document.getElementById("productInfo").innerHTML = t.errorCheck;
-            });
+      fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(barcode)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "found") {
+            lastProductName = data.product;
+            document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong><br><button onclick="rescanChemical()" style="margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #2E7D32; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='#1b5e20'" onmouseout="this.style.backgroundColor='#2E7D32'">${t.scanAgain}</button>`;
+          } else {
+            lastProductName = "";
+            document.getElementById("productInfo").innerHTML = `${t.notFound}<br><button onclick="rescanChemical()" style="margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #DC6D18; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='#1b5e20'" onmouseout="this.style.backgroundColor='#FB8C00'">${t.scanAgain}</button>`;
+          }
         })
-        .catch(err => {
-          console.error(err);
-          document.getElementById("productInfo").innerHTML = t.errorCamera;
+        .catch(() => {
+          lastProductName = "";
+          document.getElementById("productInfo").innerHTML = `${t.errorCheck}<br><button onclick="rescanChemical()" style="margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #DC6D18; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='#1b5e20'" onmouseout="this.style.backgroundColor='#FB8C00'">${t.scanAgain}</button>`;
         });
-    }
+    })
+    .catch(err => {
+      console.error(err);
+      document.getElementById("productInfo").innerHTML = `${t.errorCamera}<br><button onclick="rescanChemical()" style="margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #DC6D18; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='#1b5e20'" onmouseout="this.style.backgroundColor='#FB8C00'">${t.scanAgain}</button>`;
+    });
+}
 
     function rescanChemical() {
       document.getElementById("quantity").value = "";
