@@ -33,7 +33,7 @@
     <header class="header">
       <div class="icon-title">
         <span class="material-icons">description</span>
-        <h2 style="font-size: 18px; font-weight: normal; margin: 0;">Check Out </h2>
+        <h2 id="pageTitle" style="font-size: 18px; font-weight: normal; margin: 0;">Check Out</h2>
       </div>
     </header>
 
@@ -119,6 +119,7 @@
       document.getElementById('labelQuantity').innerText = t.quantity;
       document.getElementById('btnAddText').innerText = t.add;
       document.getElementById('btnSubmitText').innerText = t.submit;
+      document.getElementById('pageTitle').innerText = t.title; // ✅ this line sets the header
     };
   </script>
 
