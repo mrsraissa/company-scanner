@@ -9,18 +9,19 @@
   <link rel="stylesheet" href="styles/checkout.css">
   <style>
     .scanner-overlay {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 60%;
-  height: 30%;
-  transform: translate(-50%, -50%);
-  border: 3px solid limegreen;
-  border-radius: 8px;
-  pointer-events: none;
-  animation: pulse-border 1s infinite;
-  display: none;
-}
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 60%;
+      height: 30%;
+      transform: translate(-50%, -50%);
+      border: 3px solid limegreen;
+      border-radius: 8px;
+      pointer-events: none;
+      animation: pulse-border 1s infinite;
+      display: none;
+    }
+
     @keyframes pulse-border {
       0% { box-shadow: 0 0 0 0 rgba(50, 205, 50, 0.7); }
       70% { box-shadow: 0 0 0 10px rgba(50, 205, 50, 0); }
@@ -68,8 +69,19 @@
     const t = translations[lang];
     document.title = t.title;
 
-    function rescanChemical() {
-      document.getElementById("quantity").value = "";
+    let codeReader;
+    let lastProductName = "";
+    let lastBarcode = "";
+    const chemicals = [];
+    const MAX_CHEMICALS = 50;
+
+    let previewElem;
+    window.onload = () => {
+      previewElem = document.getElementById('preview');
+      document.querySelector('.scanner-overlay').style.display = 'none';
+    };
+
+    function openScanner() {
       setTimeout(() => {
         document.querySelector('.scanner-overlay').style.display = 'block';
       }, 300);
@@ -90,121 +102,34 @@
               if (data.status === "found") {
                 lastProductName = data.product;
                 document.querySelector('.scanner-overlay').style.display = 'none';
-                document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong><br><button onclick=\"rescanChemical()\" style=\"margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #DC6D18; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;\" onmouseover=\"this.style.backgroundColor='#1b5e20'\" onmouseout=\"this.style.backgroundColor='#FB8C00'\">${t.scanAgain}</button>`;
+                document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong><br><button onclick="rescanChemical()" style="margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #2E7D32; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='#1b5e20'" onmouseout="this.style.backgroundColor='#2E7D32'">${t.scanAgain}</button>`;
               } else {
                 lastProductName = "";
                 document.querySelector('.scanner-overlay').style.display = 'none';
-                document.getElementById("productInfo").innerHTML = `${t.notFound}<br><button onclick=\"rescanChemical()\" style=\"margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #DC6D18; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;\" onmouseover=\"this.style.backgroundColor='#1b5e20'\" onmouseout=\"this.style.backgroundColor='#FB8C00'\">${t.scanAgain}</button>`;
+                document.getElementById("productInfo").innerHTML = `${t.notFound}<br><button onclick="rescanChemical()" style="margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #DC6D18; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='#1b5e20'" onmouseout="this.style.backgroundColor='#FB8C00'">${t.scanAgain}</button>`;
               }
             })
             .catch(() => {
               lastProductName = "";
               document.querySelector('.scanner-overlay').style.display = 'none';
-              document.getElementById("productInfo").innerHTML = `${t.errorCheck}<br><button onclick=\"rescanChemical()\" style=\"margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #DC6D18; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;\" onmouseover=\"this.style.backgroundColor='#1b5e20'\" onmouseout=\"this.style.backgroundColor='#FB8C00'\">${t.scanAgain}</button>`;
+              document.getElementById("productInfo").innerHTML = `${t.errorCheck}<br><button onclick="rescanChemical()" style="margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #DC6D18; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='#1b5e20'" onmouseout="this.style.backgroundColor='#FB8C00'">${t.scanAgain}</button>`;
             });
         })
         .catch(err => {
           console.error(err);
           document.querySelector('.scanner-overlay').style.display = 'none';
-          document.getElementById("productInfo").innerHTML = `${t.errorCamera}<br><button onclick=\"rescanChemical()\" style=\"margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #DC6D18; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;\" onmouseover=\"this.style.backgroundColor='#1b5e20'\" onmouseout=\"this.style.backgroundColor='#FB8C00'\">${t.scanAgain}</button>`;
+          document.getElementById("productInfo").innerHTML = `${t.errorCamera}<br><button onclick="rescanChemical()" style="margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #DC6D18; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='#1b5e20'" onmouseout="this.style.backgroundColor='#FB8C00'">${t.scanAgain}</button>`;
         });
     }
-  </script>
-</head>
-<body>
-  <div class="page-wrapper">
-    <header class="header">
-      <div class="icon-title">
-        <span class="material-icons">description</span>
-        <h2 style="font-size: 18px; font-weight: normal; margin: 0;">Check Out / Registro de salida</h2>
-      </div>
-    </header>
 
-    <main class="content" style="flex: 1; display: flex; flex-direction: column; align-items: center; padding: 80px 20px 120px; overflow-y: visible; position: relative;">
-      <button id="startScanBtn" onclick="openScanner()" style="padding: 40px; font-size: 24px; border-radius: 12px; background-color: #DC6D18; color: black; border: none; box-shadow: 0 4px 8px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px;">
-        <span class="material-icons">qr_code_scanner</span> Scan Chemical
-      </button>
-
-      <div id="scannerUI" style="display:none">
-        <div style="position: relative; width: 100%; max-width: 400px;">
-          <video id="preview" playsinline style="width: 100%; border-radius: 12px;"></video>
-          <div class="scanner-overlay"></div>
-        </div>
-
-        <div id="productInfo" style="font-size: 2em; font-weight: bold; text-align: center; color: #004d00;">&nbsp;</div>
-
-        <label for="quantity">Quantity:</label>
-        <input type="number" id="quantity" required>
-
-        <button onclick="addChemical()" class="action-button">
-          <span class="material-icons">add_circle</span> Add Chemical
-        </button>
-      </div>
-
-      <div id="chemicalList">
-        <ul id="listContainer"></ul>
-      </div>
-
-      <button onclick="submitData()" class="action-button" style="margin-top: 20px; align-self: center; padding: 20px 30px; font-size: 20px; border-radius: 12px; background-color: #DC6D18; color: white; display: flex; align-items: center; gap: 10px;">
-  <span class="material-icons">send</span> Submit
-      </button>
-      <div id="result"></div>
-    </main>
-
-    <footer class="bottom-bar">
-      <button type="button" onclick="goBack()"><span class="material-icons">home</span></button>
-    </footer>
-  </div>
-
-  <script>
-    let codeReader;
-    let lastProductName = "";
-    let lastBarcode = "";
-    const chemicals = [];
-    const MAX_CHEMICALS = 50;
-
-    let previewElem;
-    window.onload = () => {
-      previewElem = document.getElementById('preview');
-      document.querySelector('.scanner-overlay').style.display = 'none';
-    };
-
-    function openScanner() {
+    function rescanChemical() {
+      document.getElementById("quantity").value = "";
       setTimeout(() => {
         document.querySelector('.scanner-overlay').style.display = 'block';
       }, 300);
       document.getElementById('startScanBtn').style.display = 'none';
       document.getElementById('scannerUI').style.display = 'flex';
-      
-      document.getElementById("productInfo").innerHTML = "🔍 Searching ...";
-
-      codeReader = new ZXing.BrowserMultiFormatReader();
-      codeReader.decodeOnceFromVideoDevice(null, previewElem)
-        .then(result => {
-          codeReader.reset();
-          const barcode = result.text;
-          lastBarcode = barcode;
-
-          fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(barcode)}`)
-            .then(res => res.json())
-            .then(data => {
-              if (data.status === "found") {
-                lastProductName = data.product;
-                document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong><br><button onclick=\"rescanChemical()\" style=\"margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #2E7D32; color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s ease;\" onmouseover=\"this.style.backgroundColor='#1b5e20'\" onmouseout=\"this.style.backgroundColor='#2E7D32'\">🔄 Scan Again</button>`;
-              } else {
-                lastProductName = "";
-                document.getElementById("productInfo").innerHTML = "❌ Product not found";
-              }
-            })
-            .catch(() => {
-              lastProductName = "";
-              document.getElementById("productInfo").innerHTML = "❌ Error checking inventory";
-            });
-        })
-        .catch(err => {
-          console.error(err);
-          document.getElementById("productInfo").innerHTML = "❌ Error starting camera";
-        });
+      document.getElementById("productInfo").innerHTML = t.searching;
     }
 
     function addChemical() {
@@ -297,7 +222,7 @@
     }
 
     function removeChemical(index) {
-      const confirmDelete = confirm("Are you sure you want to remove this chemical?");
+      const confirmDelete = confirm(t.confirmDelete);
       if (!confirmDelete) return;
       chemicals.splice(index, 1);
       const list = document.getElementById("listContainer");
