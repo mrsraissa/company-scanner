@@ -197,14 +197,15 @@
             console.error(err);
             document.getElementById("productInfo").innerHTML = `${t.errorCamera}<br><button onclick="rescanChemical()" style="margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #DC6D18; color: white; cursor: pointer;">${t.scanAgain}</button>`;
           });
-      } catch (err) {
-        console.error(err);
-        document.getElementById("productInfo").innerHTML = `${t.errorCamera}<br>
-  <button onclick="rescanChemical()" style="margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #DC6D18; color: white; cursor: pointer;">
-    ${t.scanAgain}
-  </button>`;
-      }
-
+     } catch (err) {
+    // This only triggers if getUserMedia fails (e.g., no camera access)
+    console.error(err);
+    document.getElementById("productInfo").innerHTML = `${t.errorCamera}<br>
+      <button onclick="rescanChemical()" style="margin-top: 12px; padding: 8px 16px; font-size: 15px; border: none; border-radius: 8px; background-color: #DC6D18; color: white; cursor: pointer;">
+        ${t.scanAgain}
+      </button>`;
+  }
+}
     function toggleFlash() {
       if (!currentStream) return;
       const track = currentStream.getVideoTracks()[0];
