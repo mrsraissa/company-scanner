@@ -161,25 +161,30 @@
     }
 
     function handleBarcode(result) {
-      codeReader.reset();
-      const barcode = result.text;
-      lastBarcode = barcode;
-      fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(barcode)}`)
-        .then(res => res.json())
-        .then(data => {
-          const scanAgainBtn = `<br><button onclick="rescanChemical()" style="margin-top: 12px; padding: 8px 16px;">${t.scanAgain}</button>`;
-          if (data.status === "found") {
-            lastProductName = data.product;
-            document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong>${scanAgainBtn}`;
-          } else {
-            lastProductName = "";
-            document.getElementById("productInfo").innerHTML = `${t.notFound}${scanAgainBtn}`;
-          }
-        })
-        .catch(() => {
-          document.getElementById("productInfo").innerHTML = t.errorCheck;
-        });
-    }
+  codeReader.reset();
+  if (currentStream) {
+    currentStream.getTracks().forEach(track => track.stop());
+  }
+  const barcode = result.text;
+  lastBarcode = barcode;
+  fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(barcode)}`)
+    .then(res => res.json())
+    .then(data => {
+      const scanAgainBtn = `<br><button onclick="rescanChemical()" style="margin-top: 12px; padding: 8px 16px;">${t.scanAgain}</button>`;
+      if (data.status === "found") {
+        lastProductName = data.product;
+        document.getElementById("productInfo").innerHTML = `✅ <strong>${lastProductName}</strong>${scanAgainBtn}`;
+      } else {
+        lastProductName = "";
+        document.getElementById("productInfo").innerHTML = `${t.notFound}${scanAgainBtn}`;
+      }
+      document.getElementById("scannerUI").style.display = "none";
+      document.querySelector('.scanner-overlay').style.display = 'none';
+    })
+    .catch(() => {
+      document.getElementById("productInfo").innerHTML = t.errorCheck;
+    });
+}
     let codeReader;
     let lastProductName = "";
     let lastBarcode = "";
