@@ -149,6 +149,21 @@
       document.getElementById('pageTitle').innerText = t.title;
     };
 
+      // ✅ Auto-open scanner if permission was previously granted
+  if (localStorage.getItem('cameraAllowed') === 'true') {
+    navigator.permissions?.query({ name: 'camera' }).then(result => {
+      if (result.state === 'granted') {
+        openScanner(); // 👈 your existing function
+      } else if (result.state === 'denied') {
+        const warn = document.createElement('div');
+        warn.innerText = '📵 Camera access is blocked. Please allow it in your browser settings.';
+        warn.style = 'background:#ffe0e0;color:#b71c1c;padding:10px;border-radius:8px;margin-bottom:12px;text-align:center;';
+        document.querySelector('main').prepend(warn);
+      }
+    });
+  }
+};
+
     async function openScanner() {
       document.getElementById("productInfo").innerHTML = t.searching;
       document.getElementById('startScanBtn').style.display = 'none';
