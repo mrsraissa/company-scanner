@@ -188,7 +188,42 @@
     let flashOn = false;
     const chemicals = [];
     const MAX_CHEMICALS = 50;
+    async function openScanner() {
+  try {
+    previewElem = document.getElementById('preview');
+    const constraints = {
+      video: {
+        facingMode: "environment",
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      }
+    };
+    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+    currentStream = stream;
+    previewElem.srcObject = stream;
+    previewElem.play();
+    document.querySelector('.scanner-overlay').style.display = 'block';
 
+    codeReader = new ZXing.BrowserMultiFormatReader();
+    codeReader.decodeOnceFromVideoDevice(null, previewElem)
+      .then(result => handleBarcode(result))
+      .catch(err => {
+        console.error(err);
+        fallbackToFileInput();
+        document.getElementById("productInfo").innerHTML = `${t.errorCamera}<br>
+          <button onclick="rescanChemical()" style="margin-top: 12px; padding: 8px 16px;">
+            ${t.scanAgain}
+          </button>`;
+      });
+  } catch (err) {
+    console.error(err);
+    fallbackToFileInput();
+    document.getElementById("productInfo").innerHTML = `${t.errorCamera}<br>
+      <button onclick="rescanChemical()" style="margin-top: 12px; padding: 8px 16px;">
+        ${t.scanAgain}
+      </button>`;
+  }
+}
     window.onload = () => {
       previewElem = document.getElementById('preview');
       document.querySelector('.scanner-overlay').style.display = 'none';
