@@ -129,28 +129,35 @@
       window.location.href = 'index.html';
     }
 async function savePreferences() {
-    const name = document.getElementById('username').value.trim();
-    const language = document.getElementById('language').value;
+  const name = document.getElementById('username').value.trim();
+  const language = document.getElementById('language').value;
+  const cameraChecked = document.getElementById('cameraPermission').checked;
 
-    if (!name) {
-      alert("Please enter your name.");
-      return;
-    }
+  if (!name) {
+    alert("Please enter your name.");
+    return;
+  }
 
-    localStorage.setItem('employeeName', name);
-    localStorage.setItem('preferredLanguage', language);
+  localStorage.setItem('employeeName', name);
+  localStorage.setItem('preferredLanguage', language);
+  localStorage.setItem('cameraAllowed', cameraChecked); // ✅ save camera choice
 
+  if (cameraChecked) {
+    requestCameraAccess();
+  }
+
+  window.location.href = 'index.html';
+}
     // Try requesting camera access
+     async function requestCameraAccess() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-      stream.getTracks().forEach(track => track.stop()); // Immediately stop camera
+      stream.getTracks().forEach(track => track.stop());
       console.log("✅ Camera permission granted");
     } catch (err) {
-      console.warn("⚠️ Camera permission denied or error:", err);
+      console.warn("❌ Camera access denied:", err);
       alert("Please allow camera access when prompted so you can scan barcodes.");
     }
-
-    window.location.href = 'index.html';
   }
 
   // Skip login if already logged in
