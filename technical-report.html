@@ -1,12 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Technical Report / Informe Técnico</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://unpkg.com/@zxing/library@latest"></script>
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="styles/technical-report.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/technical-report.css" />
+  <style>
+    .scanner-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 60%;
+      height: 30%;
+      transform: translate(-50%, -50%);
+      border: 3px solid limegreen;
+      border-radius: 8px;
+      pointer-events: none;
+      animation: pulse-border 1s infinite;
+      display: none;
+    }
+    @keyframes pulse-border {
+      0% { box-shadow: 0 0 0 0 rgba(50, 205, 50, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(50, 205, 50, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(50, 205, 50, 0); }
+    }
+  </style>
 </head>
 <body>
   <div class="page-wrapper">
@@ -17,43 +37,82 @@
       </div>
     </header>
 
-    <main class="content" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: calc(100vh - 120px);">
-      <button id="startScanBtn" onclick="startScan()" style="padding: 40px; font-size: 24px; border-radius: 12px; background-color: #66BB6A; color: black; border: none; box-shadow: 0 4px 8px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px;">
+    <main
+      class="content"
+      style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: calc(100vh - 120px); position: relative;"
+    >
+      <button
+        id="startScanBtn"
+        onclick="openScanner()"
+        style="padding: 40px; font-size: 24px; border-radius: 12px; background-color: #66BB6A; color: black; border: none; box-shadow: 0 4px 8px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px;"
+      >
         <span class="material-icons">qr_code_scanner</span> Scan Chemical
       </button>
 
-      <div id="scannerUI" style="display:none">
-        <video id="preview" playsinline $1></video>
+      <div
+        id="scannerUI"
+        style="display:none; position: relative; width: 100%; max-width: 400px; margin-top: 15px;"
+      >
+        <video id="preview" playsinline style="width: 100%; border-radius: 12px;"></video>
+        <div class="scanner-overlay"></div>
+
+        <button
+          onclick="toggleFlash()"
+          style="
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            color: #FFD600;
+            border: none;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+          "
+          title="Toggle Flashlight"
+        >
+          🔦
+        </button>
 
         <div id="productInfo" style="font-size: 2.5em; font-weight: bold; margin: 20px 0; text-align: center; color: #004d00;">&nbsp;</div>
 
         <label for="quantity">Quantity:</label>
-        <input type="number" id="quantity" required>
+        <input type="number" id="quantity" required style="margin-bottom: 10px;" />
 
         <label for="unit">Unit:</label>
-        <select id="unit" required>
-  <option value="">Select unit</option>
-  <option value="oz">oz</option>
-  <option value="fl oz">fl oz</option>
-  <option value="lb">lb</option>
-  <option value="ml">ml</option>
-  <option value="g">g</option>
-  <option value="EA">EA</option>
-</select>
+        <select id="unit" required style="margin-bottom: 15px;">
+          <option value="">Select unit</option>
+          <option value="oz">oz</option>
+          <option value="fl oz">fl oz</option>
+          <option value="lb">lb</option>
+          <option value="ml">ml</option>
+          <option value="g">g</option>
+          <option value="EA">EA</option>
+        </select>
 
-        <button onclick="addChemical()" class="action-button">
+        <button onclick="addChemical()" class="action-button" style="width: 100%; padding: 12px; font-size: 18px;">
           <span class="material-icons">add_circle</span> Add Chemical
+        </button>
+
+        <button onclick="closeScanner()" class="action-button" style="margin-top: 10px; width: 100%; padding: 10px; background: #aaa; color: white; border-radius: 8px;">
+          Cancel Scan
         </button>
       </div>
 
-      <div id="chemicalList">
-        <ul id="listContainer"></ul>
+      <div id="chemicalList" style="width: 100%; max-width: 400px; margin-top: 20px;">
+        <ul id="listContainer" style="list-style: none; padding: 0;"></ul>
       </div>
 
-      <button onclick="submitReport()" class="action-button" style="margin-top: 20px; align-self: center; padding: 20px 30px; font-size: 20px; border-radius: 12px; background-color: #388E3C; color: white; display: flex; align-items: center; gap: 10px;">
-  <span class="material-icons">send</span> Submit Report
-</button>
-      <div id="responseMessage"></div>
+      <button
+        onclick="submitReport()"
+        class="action-button"
+        style="margin-top: 20px; padding: 20px 30px; font-size: 20px; border-radius: 12px; background-color: #388E3C; color: white; display: flex; align-items: center; gap: 10px;"
+      >
+        <span class="material-icons">send</span> Submit Report
+      </button>
+      <div id="responseMessage" style="margin-top: 15px; font-weight: bold;"></div>
     </main>
 
     <footer class="bottom-bar">
@@ -63,43 +122,114 @@
 
   <script>
     let codeReader;
+    let currentStream;
+    let flashOn = false;
     let scannedProduct = "";
     const chemicals = [];
     const MAX_CHEMICALS = 50;
 
-    function startScan() {
+    function openScanner() {
       document.getElementById("startScanBtn").style.display = "none";
       document.getElementById("scannerUI").style.display = "block";
       document.getElementById("productInfo").innerHTML = "🔍 Scanning...";
 
       const previewElem = document.getElementById("preview");
 
-      codeReader = new ZXing.BrowserMultiFormatReader();
-      codeReader.decodeOnceFromVideoDevice(undefined, previewElem)
-        .then(result => {
-          codeReader.reset();
-          const barcode = result.text;
+      const constraints = {
+        video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } }
+      };
 
-          fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(barcode)}`)
-            .then(res => res.json())
-            .then(data => {
-              if (data.status === "found") {
-                scannedProduct = data.product;
-                document.getElementById("productInfo").innerHTML = `✅ <strong>${scannedProduct}</strong>`;
-              } else {
-                scannedProduct = "";
-                document.getElementById("productInfo").innerHTML = "❌ Product not found";
-              }
-            })
-            .catch(() => {
-              scannedProduct = "";
-              document.getElementById("productInfo").innerHTML = "❌ Error checking inventory";
+      navigator.mediaDevices.getUserMedia(constraints)
+        .then(stream => {
+          currentStream = stream;
+          previewElem.srcObject = stream;
+          previewElem.play();
+          document.querySelector(".scanner-overlay").style.display = "block";
+
+          codeReader = new ZXing.BrowserMultiFormatReader();
+          codeReader.decodeOnceFromVideoDevice(null, previewElem)
+            .then(result => handleBarcode(result))
+            .catch(err => {
+              console.error(err);
+              fallbackToFileInput();
+              document.getElementById("productInfo").innerHTML = "❌ Error starting camera<br><button onclick='rescanChemical()'>🔄 Scan Again</button>";
             });
         })
         .catch(err => {
           console.error(err);
-          document.getElementById("productInfo").innerHTML = "❌ Error starting camera";
+          fallbackToFileInput();
+          document.getElementById("productInfo").innerHTML = "❌ Error starting camera<br><button onclick='rescanChemical()'>🔄 Scan Again</button>";
         });
+    }
+
+    function fallbackToFileInput() {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
+      input.onchange = handleImageUpload;
+      input.click();
+    }
+
+    function handleImageUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function () {
+        const img = new Image();
+        img.src = reader.result;
+        img.onload = function () {
+          codeReader = new ZXing.BrowserMultiFormatReader();
+          codeReader.decodeFromImage(img)
+            .then(result => handleBarcode(result))
+            .catch(() => {
+              document.getElementById("productInfo").innerHTML = "❌ Product not found";
+            });
+        };
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleBarcode(result) {
+      codeReader.reset();
+      if (currentStream) currentStream.getTracks().forEach(track => track.stop());
+      scannedProduct = result.text;
+
+      fetch(`https://script.google.com/macros/s/AKfycbylVi6R5O2weg4d0gDdCjRz3imuBbZBKzsEJKjvYlbPrvNeLZ-7LZ1l4xiahUe6MI8S/exec?barcode=${encodeURIComponent(scannedProduct)}`)
+        .then(res => res.json())
+        .then(data => {
+          const scanAgainBtn = `<br><button onclick="rescanChemical()" style="margin-top: 12px; padding: 8px 16px;">🔄 Scan Again</button>`;
+          if (data.status === "found") {
+            scannedProduct = data.product;
+            document.getElementById("productInfo").innerHTML = `✅ <strong>${scannedProduct}</strong>${scanAgainBtn}`;
+          } else {
+            scannedProduct = "";
+            document.getElementById("productInfo").innerHTML = `❌ Product not found${scanAgainBtn}`;
+          }
+        })
+        .catch(() => {
+          scannedProduct = "";
+          document.getElementById("productInfo").innerHTML = "❌ Error checking inventory";
+        });
+    }
+
+    function toggleFlash() {
+      if (!currentStream) return;
+      const track = currentStream.getVideoTracks()[0];
+      const capabilities = track.getCapabilities();
+      if (!capabilities.torch) {
+        alert("Flash not supported on this device.");
+        return;
+      }
+      flashOn = !flashOn;
+      track.applyConstraints({ advanced: [{ torch: flashOn }] });
+    }
+
+    function rescanChemical() {
+      document.getElementById("quantity").value = "";
+      document.getElementById("unit").value = "";
+      document.getElementById("productInfo").innerHTML = "";
+      openScanner();
     }
 
     function addChemical() {
@@ -107,7 +237,6 @@
         alert("You have reached the maximum of 50 chemicals for today.");
         return;
       }
-
       const quantity = document.getElementById("quantity").value.trim();
       const unit = document.getElementById("unit").value;
       const employee = localStorage.getItem("employeeName") || "Unknown";
@@ -121,14 +250,37 @@
 
       const li = document.createElement("li");
       const index = chemicals.length - 1;
-      li.innerHTML = `${scannedProduct} - ${quantity} ${unit} <button onclick="removeChemical(${index})" style="margin-left: 10px; color: red; background: none; border: none; cursor: pointer;">❌</button>`;
+      li.innerHTML = `${scannedProduct} - ${quantity} ${unit} <button onclick="editChemical(${index})" style="color: blue; background: none; border: none; cursor: pointer;">✏️</button> <button onclick="removeChemical(${index})" style="margin-left: 10px; color: red; background: none; border: none; cursor: pointer;">❌</button>`;
       document.getElementById("listContainer").appendChild(li);
 
       document.getElementById("scannerUI").style.display = "none";
       document.getElementById("startScanBtn").style.display = "block";
       document.getElementById("quantity").value = "";
       document.getElementById("unit").value = "";
+      document.getElementById("productInfo").innerHTML = "";
       scannedProduct = "";
+    }
+
+    function editChemical(index) {
+      const item = chemicals[index];
+      document.getElementById("quantity").value = item.quantity;
+      document.getElementById("unit").value = item.unit;
+      scannedProduct = item.chemical;
+      document.getElementById("productInfo").innerHTML = `✏️ Editing: <strong>${item.chemical}</strong>`;
+      document.getElementById("scannerUI").style.display = "block";
+      document.getElementById("startScanBtn").style.display = "none";
+
+      chemicals.splice(index, 1);
+      const list = document.getElementById("listContainer");
+      list.removeChild(list.childNodes[index]);
+    }
+
+    function removeChemical(index) {
+      const confirmDelete = confirm("Are you sure you want to remove this chemical?");
+      if (!confirmDelete) return;
+      chemicals.splice(index, 1);
+      const list = document.getElementById("listContainer");
+      list.removeChild(list.childNodes[index]);
     }
 
     function submitReport() {
@@ -137,7 +289,7 @@
         return;
       }
 
-      const scriptURL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec";
+      const scriptURL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec"; // replace with your Apps Script URL
 
       chemicals.forEach(entry => {
         const formData = new URLSearchParams();
@@ -149,9 +301,7 @@
         fetch(scriptURL, {
           method: "POST",
           mode: "no-cors",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-          },
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
           body: formData.toString()
         });
       });
@@ -161,16 +311,8 @@
       chemicals.length = 0;
     }
 
-    function removeChemical(index) {
-  const confirmDelete = confirm("Are you sure you want to remove this chemical?");
-  if (!confirmDelete) return;
-  chemicals.splice(index, 1);
-  const list = document.getElementById("listContainer");
-  list.removeChild(list.childNodes[index]);
-}
-
     function goBack() {
-      window.location.href = 'index.html';
+      window.location.href = "index.html";
     }
   </script>
 </body>
